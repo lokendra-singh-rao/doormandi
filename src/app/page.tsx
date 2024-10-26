@@ -1,5 +1,3 @@
-import Image from "next/image";
-import { redirect, RedirectType } from "next/navigation";
 import Hero from "./ui/Home/Hero";
 import FeaturedSection from "./ui/Home/FeaturedSection";
 import HowItWorks from "./ui/Home/HowItWorks";
