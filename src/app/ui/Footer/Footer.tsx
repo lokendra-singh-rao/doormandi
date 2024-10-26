@@ -1,5 +1,5 @@
 "use client";
-import { Phone, Facebook, Twitter, Instagram, Truck, Shield } from "lucide-react";
+import { Phone, Truck, Shield } from "lucide-react";
 import { useState } from "react";
 import IconTooltip from "../Icons/IconTooltip";
 
