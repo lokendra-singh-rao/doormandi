@@ -1,8 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Search, ShoppingCart } from "lucide-react";
 import LocationModal from "../LocationModel/LocationModel";
 
+interface LocationModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
 interface LocationState {
   address: string;
   deliveryTime: string;
