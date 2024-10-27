@@ -1,6 +1,6 @@
 import { X } from "lucide-react";
 
-export default function LocationModal({ isOpen, onClose }) {
+export default function LocationModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   if (!isOpen) return null;
   return (
     <div className="">
