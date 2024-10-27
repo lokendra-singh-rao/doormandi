@@ -29,14 +29,6 @@ export default function Navbar() {
     setIsLocationModalOpen(false);
   };
 
-  /*************  ✨ Codeium Command ⭐  *************/
-  /**
-   * Handles the next button click event by incrementing the current index of
-   * the search slide items array. If the current index is the last item in the
-   * array, it resets the current index to 0.
-   */
-  /******  aa7926d0-d299-467e-b5b4-985a4ed15e5b  *******/
-
   return (
     <>
       {/* LOGO */}
