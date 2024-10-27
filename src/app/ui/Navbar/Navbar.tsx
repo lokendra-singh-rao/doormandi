@@ -17,6 +17,11 @@ export default function Navbar() {
     address: "Gurugram, Haryana, India",
     deliveryTime: "8 minutes",
   });
+
+useEffect(()=>{
+setLocation({address:"Gurugram, Haryana, India",deliveryTime: "8 minutes",});
+},[])
+
   const searchSlideItems = ['Search "milk"', 'Search "bread"', 'Search "sugar"'];
 
   const [isLocationModalOpen, setIsLocationModalOpen] = useState<boolean>(false);
