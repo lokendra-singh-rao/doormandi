@@ -19,8 +19,8 @@ export default function Navbar() {
   
   const [isLocationModalOpen, setIsLocationModalOpen] = useState<boolean>(false);
   const [inputFocus, setInputFocus] = useState<boolean>(false);
-  const inputRef1 = useRef(null);
-  const inputRef2 = useRef(null);
+  const inputRef1 = useRef<HTMLInputElement>(null);
+  const inputRef2 = useRef<HTMLInputElement>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   
   const searchSlideItems = ['Search "apple"', 'Search "potato"', 'Search "orange"', 'Search "peas"', 'Search "banana"', 'Search "cauliflower"', 'Search "grapes"', 'Search "brinjal"', 'Search "pineapple"', 'Search "spinach"'];
@@ -74,7 +74,7 @@ export default function Navbar() {
                 className="overflow-hidden h-full cursor-text peer-focus:hidden z-0 w-full absolute top-0 left-0"
                 onClick={() => {
                   setInputFocus(true);
-                  inputRef1.current.focus();
+                  inputRef1.current?.focus();
                 }}
               >
                 {searchSlideItems.map((item, index) => {
