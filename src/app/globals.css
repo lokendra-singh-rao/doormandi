@@ -7,3 +7,69 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+.placeholderAnimation {
+  position: absolute;
+  top: 100%;
+  left: 50px;
+  animation: 15000ms ease 0s infinite normal forwards running animate;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 18px;
+  color: rgb(153, 153, 153);
+  margin-top: 14px;
+}
+@keyframes animate {
+  0% {
+    top: 100%;
+    visibility: visible;
+  }
+  10% {
+    top: 0px;
+  }
+  20% {
+    top: -100%;
+    visibility: hidden;
+  }
+  100% {
+    top: 100%;
+    visibility: hidden;
+  }
+}
+
+.animationText1 {
+  animation-delay: 0ms;
+}
+
+.animationText2 {
+  animation-delay: 1500ms;
+}
+
+.animationText3 {
+  animation-delay: 3000ms;
+}
+
+.animationText4 {
+  animation-delay: 4500ms;
+}
+
+.animationText5 {
+  animation-delay: 6000ms;
+}
+
+.animationText6 {
+  animation-delay: 7500ms;
+}
+
+.animationText7 {
+  animation-delay: 9000ms;
+}
+.animationText8 {
+  animation-delay: 10500ms;
+}
+.animationText9 {
+  animation-delay: 12000ms;
+}
+.animationText10 {
+  animation-delay: 13500ms;
+}
