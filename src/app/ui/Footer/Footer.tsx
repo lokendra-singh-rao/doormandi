@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { Phone } from "lucide-react";
 import { useState } from "react";
 import IconTooltip from "../Icons/IconTooltip";
@@ -11,10 +12,10 @@ export default function Footer() {
   };
 
   return (
-    <footer className="px-8 md:px-10 lg:px-12 w-full bg-gray-900 text-gray-300 pt-12 pb-8">
+    <footer className="px-8 md:px-12 lg:pr-16 lg:pl-32 w-full bg-gray-900 text-gray-300 pt-12 pb-8">
       {/* Top Section */}
       <div className="mb-12">
-        <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-start lg:justify-items-center items-center gap-12 xs:gap-16">
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 items-stretch gap-12 lg:gap-16">
           {/* Company Info */}
           <div className="space-y-4">
             <h3 className="text-xl font-semibold text-white">Company</h3>
@@ -125,37 +126,35 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      
 
       {/* Main Content */}
       <div className="mb-12">
-        <div className="flex flex-wrap items-center justify-center gap-12 md:gap-48">
-          {/* Newsletter */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-white">Newsletter</h3>
-            <form onSubmit={handleNewsletterSubmit} className="flex flex-wrap flex-col sm:flex-row gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 justify-items-start md:justify-items-center items-center justify-between gap-12 lg:gap-16">
+          <div className="flex flex-col">
+            <h1 className="text-4xl font-bold text-white">Newsletter Signup</h1>
+            <p className="py-4 text-sm xs:text-base font-bold">🌱 Stay Fresh with Our Newsletter! 🍏</p>
+            <form onSubmit={handleNewsletterSubmit} className="flex w-full md:w-auto flex-wrap flex-col flex-grow sm:flex-row gap-2">
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" className="flex-1 rounded-lg border-gray-700 bg-gray-800 text-gray-300 shadow-inner px-4 py-2" />
               <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">
                 Subscribe
               </button>
             </form>
-            <p>🌱 Stay Fresh with Our Newsletter! 🍏</p>
           </div>
 
           {/* Social Media */}
-          <div className="space-y-4">
+          <div className="flex flex-col gap-2">
             <h3 className="text-xl font-semibold text-white">Connect With Us</h3>
-            <div className="flex space-x-4">
-            <IconTooltip method="Facebook" title={"Facebook"} />
-            <IconTooltip method="Twitter" title={"Twitter"} />
-            <IconTooltip method="Instagram" title={"Instagram"} />
+            <div className="flex gap-4">
+              <IconTooltip method="Facebook" title={"Facebook"} />
+              <IconTooltip method="Twitter" title={"Twitter"} />
+              <IconTooltip method="Instagram" title={"Instagram"} />
             </div>
           </div>
 
           {/* App Downloads */}
-          {/* <div className="space-y-4">
+          {/* <div className="flex flex-col gap-2">
             <h3 className="text-xl font-semibold text-white">Mobile App Coming Soon!</h3>
-            <div className="flex space-x-4">
+            <div className="flex gap-2">
               <div className="w-32 h-12 bg-gray-700 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-600 cursor-pointer transition">App Store</div>
               <div className="w-32 h-12 bg-gray-700 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-600 cursor-pointer transition">Play Store</div>
             </div>
