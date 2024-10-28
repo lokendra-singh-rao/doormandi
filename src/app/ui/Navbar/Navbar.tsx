@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import React, { useEffect, useState } from "react";
-import { LocateIcon, Search, ShoppingCart, Zap } from "lucide-react";
+import { Home, LocateIcon, Search, ShoppingCart, Zap } from "lucide-react";
 import LocationModal from "../LocationModel/LocationModel";
 
 interface LocationState {
@@ -41,7 +41,7 @@ export default function Navbar() {
       {/* SEARCH */}
       {/* CART */}
       {/* ACCOUNT */}
-      <nav className="bg-white  p-4 flex flex-col gap-4 max-w-7xl mx-auto">
+      <nav className="bg-white p-4 flex flex-col gap-2 xs:gap-4 max-w-7xl mx-auto">
         <div className="w-full mx-auto flex items-center justify-between sm:gap-8 gap-4">
           {/* Logo and Location */}
           {/* Logo */}
@@ -49,11 +49,6 @@ export default function Navbar() {
             <h1 className="text-2xl font-bold text-gray-800 cursor-pointer">
               Door<span className="text-green-500 hover:text-green-600">Mandi</span>
             </h1>
-            {/* <span className="block sm:hidden">|</span>
-            <span className="flex items-center gap-2 sm:hidden">
-              <Zap className="opacity-50 " />
-              <span className="text-green-500 font-bold">8 mins</span>
-            </span> */}
           </div>
           {/* Location Dropdown */}
           <div className="sm:flex hidden items-center cursor-pointer" onClick={handleLocationClick} role="button" tabIndex={0}>
@@ -100,12 +95,23 @@ export default function Navbar() {
             </button>
           </div>
         </div>
-        <div className="text-sm font-medium text-gray-800 flex items-center">
-          {location.address}
-          <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="text-sm font-medium text-gray-800 flex items-center sm:hidden justify-between" onClick={handleLocationClick}>
+          <div className="flex items-center gap-1 xs:gap-2 text-base sm:text-lg">
+            <Home className="hidden" />
+            <div className="flex gap-1 font-bold">
+              <div className="">{location.type}</div>-<div className="font-semibold">{location.address.slice(0, 25)}...</div>
+            </div>
+            <span className="hidden xs:block sm:hidden">|</span>
+            <span className=" items-center gap-1 hidden xs:flex sm:hidden">
+              <Zap className="opacity-50 hidden" />
+              <span className="text-green-500 font-bold">8 mins</span>
+            </span>
+          </div>
+          <svg className="w-5 h-5 ml-1 xs:block hidden" fill="none" stroke="#22C55E" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </div>
+        <div className="block xs:hidden text-sm font-semibold text-gray-900">Delivery in {location.deliveryTime}</div>
         <div className="flex-1 h-full w-full flex md:hidden">
           <div className="relative w-full">
             <Search className="absolute left-3 top-2.5 h-5 w-5" />
