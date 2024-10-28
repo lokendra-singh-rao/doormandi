@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Home, LocateIcon, Search, ShoppingCart, Zap } from "lucide-react";
 import LocationModal from "../LocationModel/LocationModel";
 
@@ -16,15 +16,18 @@ export default function Navbar() {
     address: "Gurugram, Haryana, India",
     deliveryTime: "8 minutes",
   });
-
+  
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState<boolean>(false);
+  const [inputFocus, setInputFocus] = useState<boolean>(false);
+  const inputRef1 = useRef(null);
+  const inputRef2 = useRef(null);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  
+  const searchSlideItems = ['Search "apple"', 'Search "potato"', 'Search "orange"', 'Search "peas"', 'Search "banana"', 'Search "cauliflower"', 'Search "grapes"', 'Search "brinjal"', 'Search "pineapple"', 'Search "spinach"'];
+  
   useEffect(() => {
     setLocation({ type: "Home", address: "Gurugram, Haryana, India", deliveryTime: "8 minutes" });
   }, []);
-
-  const searchSlideItems = ['Search "milk"', 'Search "bread"', 'Search "sugar"', 'Search "butter"', 'Search "paneer"', 'Search "chips"', 'Search "curd"', 'Search "rice"', 'Search "chocolate"', 'Search "egg"'];
-
-  const [isLocationModalOpen, setIsLocationModalOpen] = useState<boolean>(false);
-  const [inputFocus, setInputFocus] = useState<boolean>(false);
 
   const handleLocationClick = (): void => {
     setIsLocationModalOpen(true);
@@ -64,24 +67,24 @@ export default function Navbar() {
           </div>
           {/* Search Bar */}
           <div className="flex-1 h-full hidden md:flex ">
-            <div className="relative w-full">
+            <div className="flex flex-col relative w-full">
               <Search className="absolute left-3 top-2.5 h-5 w-5" />
-              <input
-                type="text"
-                className="pl-12 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-300 bg-gray-50 z-2 peer"
-                onFocus={() => {
+              <input type="text" className="pl-12 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-300 bg-gray-50 z-2 peer" onChange={(e) => setSearchQuery(e.target.value)} value={searchQuery} ref={inputRef1} onBlur={() => setInputFocus(false)}/>
+              {!inputFocus && searchQuery.length < 1 && <div
+                className="overflow-hidden h-full cursor-text peer-focus:hidden z-0 w-full absolute top-0 left-0"
+                onClick={() => {
                   setInputFocus(true);
+                  inputRef1.current.focus();
                 }}
-              />
-              <div className="overflow-hidden h-full peer-focus:hidden -z-0">
+              >
                 {searchSlideItems.map((item, index) => {
                   return (
-                    <div key={index} className={`placeholderAnimation animationText${index + 1}`}>
+                    <div key={index} className={`select-none placeholderAnimation animationText${index + 1}`}>
                       {item}
                     </div>
                   );
                 })}
-              </div>
+              </div>}
             </div>
           </div>
           {/* Login and Cart */}
@@ -115,16 +118,22 @@ export default function Navbar() {
         <div className="flex-1 h-full w-full flex md:hidden">
           <div className="relative w-full">
             <Search className="absolute left-3 top-2.5 h-5 w-5" />
-            <input type="text" className="w-full pl-12 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-300 bg-gray-50 z-2 peer" />
-            <div className="overflow-hidden h-full peer-focus:hidden -z-0">
-              {searchSlideItems.map((item, index) => {
-                return (
-                  <div key={index} className={`placeholderAnimation animationText${index + 1}`}>
-                    {item}
-                  </div>
-                );
-              })}
-            </div>
+            <input type="text" className="pl-12 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-300 bg-gray-50 z-2 peer" onChange={(e) => setSearchQuery(e.target.value)} value={searchQuery} ref={inputRef2} onBlur={() => setInputFocus(false)}/>
+              {!inputFocus && searchQuery.length < 1 && <div
+                className="overflow-hidden h-full cursor-text peer-focus:hidden z-0 w-full absolute top-0 left-0"
+                onClick={() => {
+                  setInputFocus(true);
+                  inputRef2.current?.focus();
+                }}
+              >
+                {searchSlideItems.map((item, index) => {
+                  return (
+                    <div key={index} className={`select-none placeholderAnimation animationText${index + 1}`}>
+                      {item}
+                    </div>
+                  );
+                })}
+              </div>}
           </div>
         </div>
       </nav>
