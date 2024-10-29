@@ -1,5 +1,5 @@
 import { CreditCard, Shield, Truck, Facebook, Twitter, Instagram } from "lucide-react";
-import Upi from "./Upi";
+import Upi from "./UpiIcon";
 
 const icons = {
   CreditCard,

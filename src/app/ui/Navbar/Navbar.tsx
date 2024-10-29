@@ -65,7 +65,7 @@ export default function Navbar() {
       {/* SEARCH */}
       {/* CART */}
       {/* ACCOUNT */}
-      <nav className="bg-white p-4 flex relative sm:sticky left-0 top-0 flex-col gap-2 xs:gap-4 max-w-7xl mx-auto shadow-md">
+      <nav className="bg-white p-4 w-full flex relative sm:sticky left-0 top-0 flex-col gap-2 xs:gap-4 mx-auto shadow-md z-[998]">
         <div className="w-full mx-auto flex items-center justify-between gap-4 sm:gap-6 lg:gap-8">
           {/* Logo and Location */}
           {/* Logo */}
@@ -105,7 +105,7 @@ export default function Navbar() {
                 >
                   {searchSlideItems.map((item, index) => {
                     return (
-                      <div key={index} className={`select-none placeholderAnimation animationText${index + 1}`}>
+                      <div key={index} className={`select-none mt-3 placeholderAnimation animationText${index + 1}`}>
                         {item}
                       </div>
                     );
@@ -128,7 +128,7 @@ export default function Navbar() {
 
         <div className="font-medium w-full text-gray-800 flex items-center sm:hidden justify-between" onClick={handleLocationClick}>
           <div className="flex items-center w-full gap-1 xs:gap-2 text-base justify-between sm:text-lg">
-            <div className="flex gap-1 font-bold text-sm xs:text-base">
+            <div className="flex items-center gap-1 font-bold text-sm xs:text-base">
               <div className="">{location.type}</div>-<div className="font-semibold">{location.address.houseNo}, {location.address.street}</div>
               <ChevronDown size={20} className="opacity-80" />
             </div>
@@ -140,8 +140,8 @@ export default function Navbar() {
         </div>
         <div className="flex-1 h-full w-full flex md:hidden">
           <div className="relative w-full">
-            <Search className="absolute left-3 top-2.5 h-5 w-5" />
-            <input type="text" className="pl-12 pr-4 py-2 border w-full border-gray-200 rounded-lg focus:outline-none focus:border-gray-300 bg-gray-50 z-2 peer" onChange={(e) => setSearchQuery(e.target.value)} value={searchQuery} ref={inputRef2} onBlur={() => setInputFocus(false)} />
+            <Search className="absolute left-3 top-1.5 h-5 w-5" />
+            <input type="text" className="pl-12 pr-4 py-1 xs:py-2 border w-full border-gray-200 rounded-lg focus:outline-none focus:border-gray-300 bg-gray-50 z-2 peer" onChange={(e) => setSearchQuery(e.target.value)} value={searchQuery} ref={inputRef2} onBlur={() => setInputFocus(false)} />
             {!inputFocus && searchQuery.length < 1 && (
               <div
                 className="overflow-hidden h-full cursor-text peer-focus:hidden z-0 w-full absolute top-0 left-0"
@@ -152,7 +152,7 @@ export default function Navbar() {
               >
                 {searchSlideItems.map((item, index) => {
                   return (
-                    <div key={index} className={`select-none placeholderAnimation animationText${index + 1}`}>
+                    <div key={index} className={`select-none placeholderAnimation mt-[6px] animationText${index + 1}`}>
                       {item}
                     </div>
                   );

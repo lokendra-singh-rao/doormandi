@@ -1,9 +1,31 @@
+"use client"
+
+import Carousel from "../Shared/Carousel";
+
 export default function Hero() {
+
+  const slides = [
+    {
+      title:"Ausi",
+      image:"/offerslide1.webp"
+    },
+    {
+      title:"Ausi",
+      image:"/offerslide2.webp"
+    },
+    {
+      title:"Ausi",
+      image:"/offerslide1.webp"
+    },
+    {
+      title:"Ausi",
+      image:"/offerslide2.webp"
+    }
+  ]
+
   return (
-    <section className="hero bg-green-500 text-white p-10 text-center">
-      <h1 className="text-4xl font-bold">Welcome to DoorMandi</h1>
-      <p className="mt-4 text-lg">Fresh produce delivered to your doorstep.</p>
-      <button className="mt-6 px-6 py-3 bg-white text-green-500 font-semibold rounded-lg">Shop Now</button>
+    <section className="hero rounded-md px-2 py-2 xs:px-4 xs:py-4 md:px-10 md:py-6 z-0 relative">
+      <Carousel slides={slides}/>
     </section>
   );
 }

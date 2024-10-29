@@ -3,9 +3,9 @@ import { X } from "lucide-react";
 export default function LocationModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   if (!isOpen) return null;
   return (
-    <div className="">
-      <div className="bg-black opacity-50 fixed inset-0" onClick={onClose}></div>
-      <div className="absolute top-[5.5rem] left-20 bg-white rounded-lg p-6 mx-4">
+    <div>
+      <div className="bg-black opacity-50 fixed inset-0 z-[999]" onClick={onClose}></div>
+      <div className="absolute top-[5.5rem] left-20 bg-white rounded-lg p-6 mx-4 z-[1000]">
         {/* Header with close button */}
         <div className="flex justify-between items-center mb-5">
           <h2 className="text-xl font-semibold text-gray-800">Change Location</h2>

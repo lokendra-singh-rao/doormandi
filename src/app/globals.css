@@ -12,13 +12,13 @@
   position: absolute;
   top: 100%;
   left: 50px;
-  animation: 15000ms ease 0s infinite normal forwards running animate;
+  animation: 15000ms ease-in-out 0s infinite animate;
   font-weight: 400;
   font-size: 16px;
   line-height: 18px;
   color: rgb(153, 153, 153);
-  margin-top: 14px;
 }
+
 @keyframes animate {
   0% {
     top: 100%;

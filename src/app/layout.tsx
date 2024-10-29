@@ -14,13 +14,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className="antialiased"
-      >
-        
+      <body className="antialiased">
         {children}
-        <Footer/>
+        <Footer />
       </body>
     </html>
   );
 }
+
+// Z-index
+// location model = 1000
+// location model overlay = 999
+// navbar = 998
+
+// colors
+// primary1: bg-green-500
+// primary2: bg-gray-900
+// secondary1: bg-green-100
+// secondary2: bg-gray-100
+// secondary3: white
