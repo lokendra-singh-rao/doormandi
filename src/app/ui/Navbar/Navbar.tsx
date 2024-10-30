@@ -61,7 +61,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="bg-white p-4 w-full flex relative sm:sticky left-0 top-0 flex-col gap-2 xs:gap-4 mx-auto shadow-md z-[998]">
+      <nav className="bg-white px-4 py-2 md:p-4 w-full flex relative sm:sticky left-0 top-0 flex-col gap-2 mx-auto shadow-md z-[998]">
         <div className="w-full mx-auto flex items-center justify-between gap-4 sm:gap-6 lg:gap-8">
           {/* Logo and Location */}
           {/* Logo */}
@@ -117,7 +117,7 @@ export default function Navbar() {
               <ShoppingCart className="h-6 w-6" />
             </button>
             <Link href={"/login"}>
-            <button type="button" className="text-white bg-green-500 hover:bg-green-600 rounded-lg font-semibold px-3 py-2 text-sm">
+            <button type="button" className="text-white bg-green-500 hover:bg-green-600 rounded-lg font-semibold px-3 py-1.5 md:py-2 text-sm">
               Login
             </button></Link>
           </div>
@@ -137,8 +137,8 @@ export default function Navbar() {
         </div>
         <div className="flex-1 h-full w-full flex md:hidden">
           <div className="relative w-full">
-            <Search className="absolute left-3 top-1.5 h-5 w-5" />
-            <input type="text" className="pl-12 pr-4 py-1 xs:py-2 border w-full border-gray-200 rounded-lg focus:outline-none focus:border-gray-300 bg-gray-50 z-2 peer" onChange={(e) => setSearchQuery(e.target.value)} value={searchQuery} ref={inputRef2} onBlur={() => setInputFocus(false)} />
+            <Search className="absolute left-3.5 top-2 h-5 w-5" />
+            <input type="text" className="pl-12 pr-4 py-1.5 border w-full border-gray-200 rounded-lg focus:outline-none focus:border-gray-300 bg-gray-50 z-2 peer" onChange={(e) => setSearchQuery(e.target.value)} value={searchQuery} ref={inputRef2} onBlur={() => setInputFocus(false)} />
             {!inputFocus && searchQuery.length < 1 && (
               <div
                 className="overflow-hidden h-full cursor-text peer-focus:hidden z-0 w-full absolute top-0 left-0"
@@ -149,7 +149,7 @@ export default function Navbar() {
               >
                 {searchSlideItems.map((item, index) => {
                   return (
-                    <div key={index} className={`select-none placeholderAnimation mt-[6px] animationText${index + 1}`}>
+                    <div key={index} className={`select-none placeholderAnimation mt-[8px] animationText${index + 1}`}>
                       {item}
                     </div>
                   );

@@ -1,7 +1,7 @@
 "use client";
 import GoogleIcon from "@/app/ui/Icons/GoogleIcon";
 import LoginForm from "@/app/ui/Login/LoginForm";
-import Separator from "@/app/ui/Login/Separator";
+import Separator from "@/app/ui/Shared/Separator";
 
 export default function Login() {  
 
@@ -15,7 +15,7 @@ export default function Login() {
             <GoogleIcon /> Login with Google
           </button>
         </div>
-        <div className="py-4">
+        <div className="py-4 text-[0.6rem]">
           <Separator text="or Login with Email" />
         </div>
         
