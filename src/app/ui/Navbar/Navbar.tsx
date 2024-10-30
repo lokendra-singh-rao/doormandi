@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Search, ShoppingCart, Clock8, ChevronDown } from "lucide-react";
 
 import LocationModal from "../LocationModel/LocationModel";
+import Link from "next/link";
 
 interface AddressType {
   houseNo: number;
@@ -60,19 +61,14 @@ export default function Navbar() {
 
   return (
     <>
-      {/* LOGO */}
-      {/* LOCATION DROPDOWN */}
-      {/* SEARCH */}
-      {/* CART */}
-      {/* ACCOUNT */}
       <nav className="bg-white p-4 w-full flex relative sm:sticky left-0 top-0 flex-col gap-2 xs:gap-4 mx-auto shadow-md z-[998]">
         <div className="w-full mx-auto flex items-center justify-between gap-4 sm:gap-6 lg:gap-8">
           {/* Logo and Location */}
           {/* Logo */}
           <div className="flex gap-2 items-center">
-            <h1 className="text-2xl font-bold text-gray-800 cursor-pointer">
+            <Link href={"/"} className="text-2xl font-bold text-gray-800 cursor-pointer">
               Door<span className="text-green-500 hover:text-green-600">Mandi</span>
-            </h1>
+            </Link >
           </div>
 
           {/* Location Dropdown */}
@@ -120,9 +116,10 @@ export default function Navbar() {
             <button type="button" className="flex items-center">
               <ShoppingCart className="h-6 w-6" />
             </button>
+            <Link href={"/login"}>
             <button type="button" className="text-white bg-green-500 hover:bg-green-600 rounded-lg font-semibold px-3 py-2 text-sm">
               Login
-            </button>
+            </button></Link>
           </div>
         </div>
 

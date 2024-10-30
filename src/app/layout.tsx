@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Footer from "./ui/Footer/Footer";
+import Navbar from "./ui/Navbar/Navbar";
+import { ReduxProvider } from "./store/provider";
 
 export const metadata: Metadata = {
   title: "DoorMandi",
@@ -14,9 +16,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">
-        {children}
-        <Footer />
+      <body>
+        <link rel="icon" href="/favicon.png" sizes="any" />
+        <ReduxProvider>
+          <Navbar />
+          {children}
+          <Footer />
+        </ReduxProvider>
       </body>
     </html>
   );
