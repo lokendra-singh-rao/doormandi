@@ -42,25 +42,17 @@ const initialState: AuthState = {
 };
 
 // Async thunk for login
-export const loginUser = createAsyncThunk("auth/login", async (credentials: LoginCredentials, { rejectWithValue }) => {
-  try {
-    // Replace this with your actual API call
-    const response = await axios.post("/api/login");
-
-    // if (!response.status === 200) {
-    //   const error = await response.json();
-    //   return rejectWithValue(error.message || "Login failed");
-    // }
-
-    // const data = await response.json();
-    // // Store token in localStorage or cookies if needed
-    // localStorage.setItem("token", data.token);
-
-    // return data.user;
-  } catch (error) {
-    return rejectWithValue((error as Error).message || "Login failed");
+export const loginUser = createAsyncThunk<User, LoginCredentials>(
+  "auth/login",
+  async (credentials: LoginCredentials, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("/api/login", { ...credentials }, { withCredentials: true });
+      return response.data.user; // Ensure this matches your API response structure
+    } catch (error) {
+      return rejectWithValue((error as Error).message || "Login failed");
+    }
   }
-});
+);
 
 const authSlice = createSlice({
   name: "auth",
