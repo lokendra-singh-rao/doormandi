@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { Search, ShoppingCart, Clock8, ChevronDown } from "lucide-react";
+import { Search, ShoppingCart, Clock8, ChevronDown, MapPin } from "lucide-react";
 
 import LocationModal from "../LocationModel/LocationModel";
 import Link from "next/link";
@@ -126,11 +126,12 @@ export default function Navbar() {
         <div className="font-medium w-full text-gray-800 flex items-center sm:hidden justify-between" onClick={handleLocationClick}>
           <div className="flex items-center w-full gap-1 xs:gap-2 text-base justify-between sm:text-lg">
             <div className="flex items-center gap-1 font-bold text-sm xs:text-base">
+              <MapPin size={20} className="opacity-80"/>
               <div className="">{location.type}</div>-<div className="font-semibold">{location.address.houseNo}, {location.address.street}</div>
               <ChevronDown size={20} className="opacity-80" />
             </div>
             <span className="flex items-center gap-1 text-sm  xs:text-base xs:flex">
-              <Clock8 size={16} className="opacity-50" />
+              <Clock8 size={16} className="opacity-80" />
               <span className="text-green-500 font-semibold">8 mins</span>
             </span>
           </div>
