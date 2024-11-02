@@ -2,7 +2,6 @@
 import GoogleIcon from "@/app/ui/Icons/GoogleIcon";
 import LoginForm from "@/app/ui/Login/LoginForm";
 import Separator from "@/app/ui/Shared/Separator";
-import Link from "next/link";
 
 export default function Login() {
   return (
@@ -19,18 +18,7 @@ export default function Login() {
           <Separator text="or Login with Email" />
         </div>
 
-        <div>
-          <LoginForm />
-        </div>
-
-        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "10px" }}>
-          <Link href="/forgot-password" className="text-blue-600 cursor-pointer bg-none border-none">
-            Forgot Password?
-          </Link>
-          <Link href="/signup" className="text-blue-600 cursor-pointer bg-none border-none">
-            Sign Up
-          </Link>
-        </div>
+        <LoginForm />
       </div>
     </section>
   );

@@ -34,6 +34,14 @@ interface LoginCredentials {
   password: string;
 }
 
+interface SignupVars {
+  fullname: string;
+  phone: number;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
 const initialState: AuthState = {
   user: null,
   isLoading: false,
@@ -46,7 +54,22 @@ export const loginUser = createAsyncThunk<User, LoginCredentials>(
   "auth/login",
   async (credentials: LoginCredentials, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/api/login", { ...credentials }, { withCredentials: true });
+      const response = await axios.post("/api/user", { ...credentials }, { withCredentials: true });
+      console.log(response)
+      return response.data.user; // Ensure this matches your API response structure
+    } catch (error) {
+      return rejectWithValue((error as Error).message || "Login failed");
+    }
+  }
+);
+
+// Async thunk for signup
+export const signUpUser = createAsyncThunk<User, SignupVars>(
+  "auth/signup",
+  async (signupDetails: SignupVars, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("/api/user", { ...signupDetails }, { withCredentials: true });
+      console.log(response)
       return response.data.user; // Ensure this matches your API response structure
     } catch (error) {
       return rejectWithValue((error as Error).message || "Login failed");

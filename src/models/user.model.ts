@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, Model } from "mongoose";
 
 enum UserRole {
   ADMIN = "ADMIN",
@@ -21,19 +21,19 @@ export interface IUser extends Document {
 
 const UserSchema: Schema<IUser> = new Schema(
   {
-    fullname: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    phone: { type: String, required: true, unique: true },
-    hash: { type: String, required: true },
-    role: { type: String, required: true, enum: Object.values(UserRole) },
-    emailVerified: { type: Boolean, required: true, default: false },
-    phoneVerified: { type: Boolean, required: true, default: false },
-    isDeleted: { type: Boolean, required: true, default: false },
-    lastLogin: { type: Date, required: true },
+    fullname: { type: String, required: [true, "Fullname is required!"] },
+    email: { type: String, required: [true, "Email is required!"], unique: true },
+    phone: { type: String, required: [true, "Phone number is required!"], unique: true },
+    hash: { type: String, required: [true, "Password is required!"] },
+    role: { type: String, required: [true, "Role is required!"], enum: Object.values(UserRole) },
+    emailVerified: { type: Boolean, default: false },
+    phoneVerified: { type: Boolean, default: false },
+    isDeleted: { type: Boolean, default: false },
+    lastLogin: { type: Date },
   },
   {
     timestamps: true,
   }
 );
 
-export const User = mongoose.model<IUser>("User", UserSchema);
+export const User: Model<IUser> = mongoose?.models?.User || mongoose.model<IUser>("User", UserSchema);
