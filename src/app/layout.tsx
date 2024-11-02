@@ -3,6 +3,7 @@ import "./globals.css";
 import Footer from "./ui/Footer/Footer";
 import Navbar from "./ui/Navbar/Navbar";
 import { ReduxProvider } from "./store/provider";
+import { connectToMongoDB } from "./lib/database";
 
 export const metadata: Metadata = {
   title: "DoorMandi",
@@ -14,6 +15,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  connectToMongoDB();
   return (
     <html lang="en">
       <body>
