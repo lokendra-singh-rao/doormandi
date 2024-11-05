@@ -36,7 +36,7 @@ interface LoginCredentials {
 
 interface SignupVars {
   fullname: string;
-  phone: number;
+  phone: number | undefined;
   email: string;
   password: string;
   confirmPassword: string;
@@ -56,12 +56,13 @@ export const loginUser = createAsyncThunk<User, LoginCredentials>(
     try {
       const response = await axios.post("/api/user", { ...credentials }, { withCredentials: true });
       console.log(response)
+
       return response.data.user; // Ensure this matches your API response structure
     } catch (error) {
       return rejectWithValue((error as Error).message || "Login failed");
     }
   }
-);
+); 
 
 // Async thunk for signup
 export const signUpUser = createAsyncThunk<User, SignupVars>(

@@ -8,7 +8,7 @@ import Link from "next/link";
 export default function SignupForm() {
   const [fullname, setFullname] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const [phone, setPhone] = useState<number>(0);
+  const [phone, setPhone] = useState<number | undefined>(undefined);
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
