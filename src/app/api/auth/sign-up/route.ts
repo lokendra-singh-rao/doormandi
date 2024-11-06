@@ -1,34 +1,43 @@
-// src/app/api/users/route.ts
-import { NextResponse } from "next/server";
+// Route - api/auth/sign-up
 import dbConnect from "@/lib/dbConnect";
-import { User } from "@/models/user.model";
-import { internalServerError, success } from "@/types/ApiResponse";
+import { badRequest, conflict, internalServerError } from "@/types/ApiResponse";
 import { randomUUID } from "crypto";
-
-export async function GET() {
-  try {
-    await dbConnect();
-    const users = await User.find({});
-    return NextResponse.json({ success: true, data: users });
-  } catch (error) {
-    console.log(error);
-    return NextResponse.json({ success: false, error: "Error fetching users" });
-  }
-}
+import { checkExistingUser, encryptPassword, generateVerificationToken, sendVerificationEmail, validateSignUpData } from "./service";
+import { ZodError } from "zod";
+import { createUser } from "@/models/user.model";
 
 export async function POST(request: Request) {
   await dbConnect();
   const requestId = randomUUID();
+
   try {
     const { fullname, phone, email, password } = await request.json();
-    const hash = password;
-    const user = new User({ fullname, phone, email, hash, role: "USER" });
-    const newUser = await User.create(user);
-    // console.log(newUser);
-   
-    return success({data: newUser, requestId, message: "User registered successfully"});
+
+    // Validate user input data
+    const validatedData = validateSignUpData({ fullname, phone, email, password });
+
+    if (!validatedData.success) {
+      return badRequest({ requestId, message: (validatedData.error as ZodError).issues[0].message });
+    }
+
+    // Check if user exists by email or phone
+    const existingUser = await checkExistingUser({ email, phone });
+
+    if (existingUser) {
+      return conflict({ requestId, message: "Email or Phone already exists" });
+    }
+
+    // Register user
+    const hash = await encryptPassword({password});
+
+    const savedUser = await createUser({ fullname, phone, email, hash });
+
+    const verificationToken = generateVerificationToken({ userId: savedUser.id });
+    
+    await sendVerificationEmail({email, verificationToken});
+
   } catch (error) {
     console.log("Error registering user", error);
-    return internalServerError({requestId});
+    return internalServerError({ requestId });
   }
 }

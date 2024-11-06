@@ -94,3 +94,11 @@ export function internalServerError({ message = "Something went wrong! Please tr
     requestId,
   });
 }
+
+export function conflict({ message = "Conflict occurred", requestId }: { message?: string; requestId: string }): NextResponse {
+  return error({
+    error: { code: "CONFLICT", message },
+    status: 409,
+    requestId,
+  });
+}
