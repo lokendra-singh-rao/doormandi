@@ -3,7 +3,6 @@ import "./globals.css";
 import Footer from "./ui/Footer/Footer";
 import Navbar from "./ui/Navbar/Navbar";
 import { ReduxProvider } from "@/app/store/provider";
-import { SessionProvider } from "next-auth/react";
 import dbConnect from "@/lib/dbConnect";
 
 export const metadata: Metadata = {
@@ -21,13 +20,11 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <link rel="icon" href="/favicon.png" sizes="any" />
-        <SessionProvider>
           <ReduxProvider>
             <Navbar />
             {children}
             <Footer />
           </ReduxProvider>
-        </SessionProvider>
       </body>
     </html>
   );
