@@ -1,8 +1,8 @@
-'use client';
-import { useEffect, useState } from 'react';
+"use client"
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-export default function VerifyEmail() {
+function VerifyEmail() {
     const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
     const [message, setMessage] = useState<string>('Verifying your email...');
     const searchParams = useSearchParams();
@@ -18,7 +18,7 @@ export default function VerifyEmail() {
             }
 
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/verify-email`, {
+                const response = await fetch(`api/auth/verify-email`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -58,3 +58,11 @@ export default function VerifyEmail() {
         </div>
     );
 }
+
+export default function VerifyEmailPage() {
+    return (
+      <Suspense fallback={<div>Loading...</div>}>
+        <VerifyEmail />
+      </Suspense>
+    );
+  }
