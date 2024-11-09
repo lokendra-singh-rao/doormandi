@@ -25,7 +25,7 @@ export interface PaginationInfo {
   pageSize: number;
 }
 
-export function success<T>({ data, status = 200, requestId, message, pagination }: { data: T; status?: number; requestId: string; message?: string; pagination?: PaginationInfo }): NextResponse {
+export function success<T>({ data, status = 200, requestId, message, pagination }: { data?: T; status?: number; requestId: string; message?: string; pagination?: PaginationInfo }): NextResponse {
   return NextResponse.json(
     {
       success: true,

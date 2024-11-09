@@ -27,9 +27,9 @@ function VerifyEmail() {
                 });
 
                 const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.message || 'Verification failed');
+                console.log("Verify email ressssss",data)
+                if (data.success !== true) {
+                    throw new Error(data.error.message || 'Verification failed');
                 }
 
                 setStatus('success');
@@ -44,7 +44,7 @@ function VerifyEmail() {
     }, [searchParams]);
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="min-h-[80vh] flex items-center justify-center bg-gray-50">
             <div className="max-w-md w-full px-6 py-8 bg-white shadow-md rounded-lg">
                 <h1 className="text-2xl font-bold text-center mb-4">Email Verification</h1>
                 <div className={`text-center ${
