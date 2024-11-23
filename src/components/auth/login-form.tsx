@@ -1,15 +1,26 @@
 "use client";
 import { CardWrapper } from "@/components/auth/card-wrapper";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import LoginSchema from "@/schemas/login-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { Button } from "../ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
-import { Button } from "../ui/button";
 import Separator from "../ui/separator";
+import { FormError } from "./form-error";
+import { FormSuccess } from "./form-success";
+import axiosClient from "@/utils/axiosClient";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export const LoginForm = () => {
+  const router = useRouter();
+
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const title = "Welcome Back!";
   const subtitle = "Login using Email";
@@ -24,11 +35,34 @@ export const LoginForm = () => {
     },
   });
 
+  const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
+    setError(null);
+    setSuccess(null);
+
+    startTransition(async () => {
+      try {
+        const res = await axiosClient.post("/api/auth/login", data);
+        console.log(res.data);
+        if (res.data.success) {
+          setSuccess(res.data.message);
+          router.push("/profile");
+        }
+      } catch (error: unknown) {
+        console.error("LOGIN ERROR", error);
+        if (axios.isAxiosError(error)) {
+          setError(error?.message);
+        } else {
+          setError("Something went wrong");
+        }
+      }
+    });
+  };
+
   return (
     <CardWrapper title={title} subtitle={subtitle} linkLabels={linkLabels} linkHrefs={linkHrefs} showSocial>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(() => {})} className="space-y-6 mb-6" >
-          <div className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mb-6">
+          <div className="space-y-2">
             <FormField
               control={form.control}
               name="email"
@@ -36,7 +70,7 @@ export const LoginForm = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="Enter your email" {...field} />
+                    <Input type="email" placeholder="Email" {...field} disabled={isPending} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -49,14 +83,16 @@ export const LoginForm = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="******" {...field} />
+                    <Input type="password" placeholder="******" {...field} disabled={isPending} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
-          <Button size={"lg"} className="w-full bg-green-500 hover:bg-green-600">
+          <FormError message={error} />
+          <FormSuccess message={success} />
+          <Button size={"lg"} className="w-full" disabled={isPending}>
             Login
           </Button>
         </form>

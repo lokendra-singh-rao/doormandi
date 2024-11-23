@@ -25,9 +25,9 @@ axiosClient.interceptors.request.use(
 axiosClient.interceptors.response.use(
   (response: AxiosResponse) => response,
   error => {
-    if (error.response?.status === 401) {
-      console.error('Unauthorized! Redirecting to login...');
-      // Handle token expiration or unauthorized responses here
+    if (error.response?.data?.error?.message) {
+      // Add the error message to the thrown error
+      error.message = error.response.data.error.message;
     }
     return Promise.reject(error);
   }

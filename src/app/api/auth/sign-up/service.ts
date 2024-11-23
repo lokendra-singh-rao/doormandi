@@ -1,6 +1,6 @@
 import { sendOTPEmail } from "@/lib/sendEmail";
 import signUpSchema from "@/schemas/register-schema";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 // Validate user sign-up data
