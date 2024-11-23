@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { Search, ShoppingCart, Clock8, ChevronDown, MapPin } from "lucide-react";
 import Link from "next/link";
 import LocationModal from "./location-modal";
 import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 interface AddressType {
   houseNo: number;
@@ -90,7 +90,7 @@ export default function Navbar() {
           <div className="flex-1 h-full hidden md:flex ">
             <div className="flex flex-col relative w-full">
               <Search className="absolute left-3 top-2.5 h-5 w-5" />
-              <input type="text" className="pl-12 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-300 bg-gray-50 z-2 peer" onChange={(e) => setSearchQuery(e.target.value)} value={searchQuery} ref={inputRef1} onBlur={() => setInputFocus(false)} />
+              <Input type="text" className="pl-12 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-300 bg-gray-50 z-2 peer" onChange={(e) => setSearchQuery(e.target.value)} value={searchQuery} ref={inputRef1} onBlur={() => setInputFocus(false)} />
               {!inputFocus && searchQuery.length < 1 && (
                 <div
                   className="overflow-hidden h-full cursor-text peer-focus:hidden z-0 w-full absolute top-0 left-0"
@@ -113,10 +113,10 @@ export default function Navbar() {
 
           {/* Login and Cart */}
           <div className="flex items-center gap-4">
-            <button type="button" className="flex items-center">
-              <ShoppingCart className="h-6 w-6" />
-            </button>
-            <Button className="bg-green-500 hover:bg-green-600">
+            <Button className="flex items-center" variant={"outline"}>
+              <Link href={"/cart"}><ShoppingCart className="h-6 w-6" /></Link>
+            </Button>
+            <Button>
               <Link href={"/login"}>Login</Link>
             </Button>
           </div>
@@ -141,7 +141,7 @@ export default function Navbar() {
         <div className="flex-1 h-full w-full flex md:hidden">
           <div className="relative w-full">
             <Search className="absolute left-3.5 top-2 h-5 w-5" />
-            <input type="text" className="pl-12 pr-4 py-1.5 border w-full border-gray-200 rounded-lg focus:outline-none focus:border-gray-300 bg-gray-50 z-2 peer" onChange={(e) => setSearchQuery(e.target.value)} value={searchQuery} ref={inputRef2} onBlur={() => setInputFocus(false)} />
+            <Input type="text" className="pl-12 pr-4 py-1.5 border w-full border-gray-200 rounded-lg focus:outline-none focus:border-gray-300 bg-gray-50 z-2 peer" onChange={(e) => setSearchQuery(e.target.value)} value={searchQuery} ref={inputRef2} onBlur={() => setInputFocus(false)} />
             {!inputFocus && searchQuery.length < 1 && (
               <div
                 className="overflow-hidden h-full cursor-text peer-focus:hidden z-0 w-full absolute top-0 left-0"

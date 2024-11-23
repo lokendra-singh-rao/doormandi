@@ -1,5 +1,7 @@
 import { Locate, X } from "lucide-react";
 import Separator from "@/components/ui/separator";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 export default function LocationModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   if (!isOpen) return null;
@@ -10,18 +12,18 @@ export default function LocationModal({ isOpen, onClose }: { isOpen: boolean; on
         {/* Header with close button */}
         <div className="flex justify-between items-center mb-5">
           <h2 className="text-xl font-semibold text-gray-800">Change Location</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700" type="button">
+          <Button onClick={onClose} className="text-gray-500 hover:text-gray-700" size={"icon"} variant={"ghost"}>
             <X className="h-6 w-6" />
-          </button>
+          </Button>
         </div>
 
         {/* Location options */}
         <div className="flex flex-col xs:flex-row items-center gap-2">
           {/* Detect location button */}
-          <button className="bg-green-500 flex gap-2 text-white p-3 items-center rounded-lg hover:bg-green-600 flex-shrink-0" type="button">
+          <Button className="h-10">
             <Locate className="h-6 w-6" />
             Auto Detect
-          </button>
+          </Button>
 
           {/* OR divider */}
           <div className="w-20 text-sm">
@@ -30,7 +32,7 @@ export default function LocationModal({ isOpen, onClose }: { isOpen: boolean; on
 
           {/* Search input */}
           <div className="">
-            <input type="text" placeholder="Search for street..." className="px-2 md:px-4 py-3 border border-gray-200 rounded-lg outline-green-500" />
+            <Input type="text" placeholder="Search for street..." className="h-10" />
           </div>
         </div>
       </div>

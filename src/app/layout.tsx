@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ReduxProvider } from "@/app/store/provider";
-import dbConnect from "@/lib/dbConnect";
+import dbConnect from "@/lib/mongodb";
 import Navbar from "@/components/navbar/navbar";
 import Footer from "@/components/footer/footer";
 

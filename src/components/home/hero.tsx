@@ -22,24 +22,22 @@ export default function Hero() {
   ];
 
   return (
-    <div className="w-full flex justify-center items-center py-4">
       <Carousel
-        className="w-full lg:w-[90vw]"
         opts={{
           align: "start",
           loop: true,
         }}
+        className="py-2 px-1 md:p-0"
       >
         <CarouselContent>
           {slides.map((slide, index) => (
             <CarouselItem key={index}>
-              <Image src={slide.image} alt={slide.title} width={1920} height={1080} className="rounded-none lg:rounded-lg" />
+              <Image src={slide.image} alt={slide.title} width={1920} height={1080} className="md:rounded-none rounded-lg" />
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="hidden lg:flex" />
-        <CarouselNext className="hidden lg:flex" />
+        <CarouselPrevious className="hidden md:flex absolute left-2" />
+        <CarouselNext className="hidden md:flex absolute right-2" />
       </Carousel>
-    </div>
   );
 }

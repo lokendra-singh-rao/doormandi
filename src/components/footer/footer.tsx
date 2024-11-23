@@ -3,6 +3,8 @@ import React from "react";
 import { Phone } from "lucide-react";
 import { useState } from "react";
 import IconTooltip from "../icons/IconTooltip";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -134,10 +136,10 @@ export default function Footer() {
             <h1 className="text-4xl font-bold text-white">Newsletter Signup</h1>
             <p className="py-4 text-sm xs:text-base font-bold">🌱 Stay Fresh with Our Newsletter! 🍏</p>
             <form onSubmit={handleNewsletterSubmit} className="flex w-full md:w-auto flex-wrap flex-col flex-grow sm:flex-row gap-2">
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" className="flex-1 rounded-lg border-gray-700 bg-gray-800 text-gray-300 shadow-inner px-4 py-2" />
-              <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">
+              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" className="h-10 flex-1 rounded-lg border-gray-700 bg-gray-800 text-gray-300 shadow-inner px-4 py-2" />
+              <Button size={"lg"}>
                 Subscribe
-              </button>
+              </Button>
             </form>
           </div>
 
