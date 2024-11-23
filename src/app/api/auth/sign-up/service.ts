@@ -1,5 +1,5 @@
 import { sendOTPEmail } from "@/lib/sendEmail";
-import signUpSchema from "@/schemas/signUpSchema";
+import signUpSchema from "@/schemas/register-schema";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 

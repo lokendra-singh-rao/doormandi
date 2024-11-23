@@ -1,4 +1,4 @@
-import loginSchema from "@/schemas/loginSchema";
+import loginSchema from "@/schemas/login-schema";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 

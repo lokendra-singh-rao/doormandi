@@ -2,7 +2,7 @@
 import React from "react";
 import { Phone } from "lucide-react";
 import { useState } from "react";
-import IconTooltip from "../Icons/IconTooltip";
+import IconTooltip from "../icons/IconTooltip";
 
 export default function Footer() {
   const [email, setEmail] = useState("");

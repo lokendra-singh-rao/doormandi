@@ -1,5 +1,5 @@
 import { Locate, X } from "lucide-react";
-import Separator from "../Shared/Separator";
+import Separator from "@/components/ui/separator";
 
 export default function LocationModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   if (!isOpen) return null;

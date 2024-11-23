@@ -2,9 +2,9 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { Search, ShoppingCart, Clock8, ChevronDown, MapPin } from "lucide-react";
-
-import LocationModal from "../LocationModel/LocationModel";
 import Link from "next/link";
+import LocationModal from "./location-modal";
+import { Button } from "../ui/button";
 
 interface AddressType {
   houseNo: number;
@@ -68,7 +68,7 @@ export default function Navbar() {
           <div className="flex gap-2 items-center">
             <Link href={"/"} className="text-2xl font-bold text-gray-800 cursor-pointer">
               Door<span className="text-green-500 hover:text-green-600">Mandi</span>
-            </Link >
+            </Link>
           </div>
 
           {/* Location Dropdown */}
@@ -116,18 +116,20 @@ export default function Navbar() {
             <button type="button" className="flex items-center">
               <ShoppingCart className="h-6 w-6" />
             </button>
-            <Link href={"/login"}>
-            <button type="button" className="text-white bg-green-500 hover:bg-green-600 rounded-lg font-semibold px-3 py-1.5 md:py-2 text-sm">
-              Login
-            </button></Link>
+            <Button className="bg-green-500 hover:bg-green-600">
+              <Link href={"/login"}>Login</Link>
+            </Button>
           </div>
         </div>
 
         <div className="font-medium w-full text-gray-800 flex items-center sm:hidden justify-between" onClick={handleLocationClick}>
           <div className="flex items-center w-full gap-1 xs:gap-2 text-base justify-between sm:text-lg">
             <div className="flex items-center gap-1 font-bold text-sm xs:text-base">
-              <MapPin size={20} className="opacity-80"/>
-              <div className="">{location.type}</div>-<div className="font-semibold">{location.address.houseNo}, {location.address.street}</div>
+              <MapPin size={20} className="opacity-80" />
+              <div className="">{location.type}</div>-
+              <div className="font-semibold">
+                {location.address.houseNo}, {location.address.street}
+              </div>
               <ChevronDown size={20} className="opacity-80" />
             </div>
             <span className="flex items-center gap-1 text-sm  xs:text-base xs:flex">

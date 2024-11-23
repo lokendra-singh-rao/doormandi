@@ -1,8 +1,8 @@
-import Hero from "./ui/Home/Hero";
-import FeaturedSection from "./ui/Home/FeaturedSection";
-import HowItWorks from "./ui/Home/HowItWorks";
-import CustomerTestimonials from "./ui/Home/CustomerTestimonials";
-import AboutUs from "./ui/Home/AboutUs";
+import AboutUs from "@/components/home/about-us";
+import CustomerTestimonials from "@/components/home/customer-testimonials";
+import FeaturedSection from "@/components/home/featured-section";
+import Hero from "@/components/home/hero";
+import HowItWorks from "@/components/home/how-it-works";
 
 export default function Home() {
   return (

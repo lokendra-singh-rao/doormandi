@@ -3,7 +3,7 @@ import { badRequest, conflict, internalServerError, success } from "@/types/ApiR
 import { randomUUID } from "crypto";
 import { encryptPassword, generateVerificationToken, sendVerificationEmail, validateSignUpData } from "./service";
 import { ZodError } from "zod";
-import { createUser, getUserByEmailOrPhone } from "@/models/user.model";
+import { createUser, getUserByEmailOrPhone, saveUser } from "@/models/user.model";
 
 export async function POST(request: Request) {
   await dbConnect();
@@ -19,16 +19,21 @@ export async function POST(request: Request) {
     }
 
     // Check if user exists by email or phone
-    const existingUser = await getUserByEmailOrPhone({ emailOrPhone: email || phone });;
+    const existingUser = await getUserByEmailOrPhone({ emailOrPhone: email || phone });
 
-    if (existingUser) {
-      return conflict({ requestId, message: "Email or Phone already exists" });
-    }
-
-    // Register user
     const hash = await encryptPassword({ password });
+    let savedUser = null;
 
-    const savedUser = await createUser({ fullname, phone, email, hash });
+    if (existingUser !== null) {
+      if (existingUser?.emailVerified) {
+        return conflict({ requestId, message: "Email or Phone already exists" });
+      } else {
+        existingUser.hash = hash;
+        savedUser = await saveUser({ user: existingUser });
+      }
+    } else {
+      savedUser = await createUser({ fullname, phone, email, hash });
+    }
 
     const verificationToken = await generateVerificationToken({ userId: savedUser.id });
 

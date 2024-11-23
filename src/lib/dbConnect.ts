@@ -10,6 +10,7 @@ export default async function dbConnect() {
 
   try {
     const db = await mongoose.connect(process.env.MONGODB_URI || "", {
+      
       connectTimeoutMS: 10000,
     });
 

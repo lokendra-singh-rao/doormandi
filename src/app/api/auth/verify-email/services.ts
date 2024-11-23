@@ -1,5 +1,5 @@
 import { sendWelcomeEmail } from "@/lib/sendEmail";
-import verifyEmailSchema from "@/schemas/verifyEmailSchema";
+import verifyEmailSchema from "@/schemas/verify-email-schema";
 import jwt from "jsonwebtoken";
 
 // Validate user input data

@@ -38,6 +38,10 @@ const UserSchema: Schema<IUser> = new Schema(
 
 const User: Model<IUser> = mongoose?.models?.User || mongoose.model<IUser>("User", UserSchema);
 
+export const saveUser = async ({ user }: { user: IUser }) => {
+  return await user.save();
+};
+
 export const createUser = async ({ fullname, email, phone, hash }: { fullname: string; email: string; phone: number; hash: string }): Promise<IUser> => {
   return await User.create({ fullname, email, phone, hash });
 };

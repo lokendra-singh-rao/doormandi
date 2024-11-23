@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Footer from "./ui/Footer/Footer";
-import Navbar from "./ui/Navbar/Navbar";
 import { ReduxProvider } from "@/app/store/provider";
 import dbConnect from "@/lib/dbConnect";
+import Navbar from "@/components/navbar/navbar";
+import Footer from "@/components/footer/footer";
 
 export const metadata: Metadata = {
   title: "DoorMandi",
