@@ -1,4 +1,4 @@
-import dbConnect from "@/lib/dbConnect";
+import dbConnect from "@/lib/mongodb";
 import { badRequest, internalServerError, notFound, success } from "@/types/ApiResponse";
 import { randomUUID } from "crypto";
 import { sendVerificationEmail, validateVerifyEmailData, verifyToken } from "./services";

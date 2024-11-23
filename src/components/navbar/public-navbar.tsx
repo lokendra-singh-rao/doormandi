@@ -1,11 +1,10 @@
 "use client";
-import { ChevronDown, Clock8, MapPin, Search, ShoppingCart, UserCircle } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { Search, ShoppingCart, Clock8, ChevronDown, MapPin } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { Button } from "../ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { Input } from "../ui/input";
 import LocationModal from "./location-modal";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 interface AddressType {
   houseNo: number;
@@ -19,7 +18,7 @@ interface LocationState {
   deliveryTime: string;
 }
 
-export default function Navbar() {
+export default function PublicNavbar() {
   const [location, setLocation] = useState<LocationState>({
     type: "Home",
     address: {
@@ -62,7 +61,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="bg-white px-4 py-2 md:py-4 md:px-6 w-full flex relative sm:sticky left-0 top-0 flex-col gap-2 mx-auto shadow-md z-[998]">
+      <nav className="bg-white px-4 py-2 md:p-4 w-full flex relative sm:sticky left-0 top-0 flex-col gap-2 mx-auto shadow-md z-[998]">
         <div className="w-full mx-auto flex items-center justify-between gap-4 sm:gap-6 lg:gap-8">
           {/* Logo and Location */}
           {/* Logo */}
@@ -113,23 +112,13 @@ export default function Navbar() {
           </div>
 
           {/* Login and Cart */}
-          <div className="flex items-center gap-6">
-            <Button className="flex items-center" variant={"outline"} size={"icon"}>
-              <Link href={"/cart"}>
-                <ShoppingCart />
-              </Link>
+          <div className="flex items-center gap-4">
+            <Button className="flex items-center" variant={"ghost"} size={"icon"}>
+              <Link href={"/cart"}><ShoppingCart className="h-6 w-6" /></Link>
             </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger className="focus-visible:">
-                  <UserCircle size={32} />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="z-[999]" align="end">
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Orders</DropdownMenuItem>
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Logout</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {<Button>
+              <Link href={"/login"}>Login</Link>
+            </Button>}
           </div>
         </div>
 

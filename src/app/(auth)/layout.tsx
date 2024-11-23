@@ -1,4 +1,4 @@
-import Navbar from "@/components/navbar/navbar";
+import PublicNavbar from "@/components/navbar/public-navbar";
 
 export default async function RootLayout({
   children,
@@ -7,7 +7,7 @@ export default async function RootLayout({
 }>) {
   return (
     <div>
-      <Navbar />
+      <PublicNavbar />
       {children}
     </div>
   );

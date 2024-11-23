@@ -1,9 +1,8 @@
+import { ReduxProvider } from "@/app/store/provider";
+import Footer from "@/components/footer/footer";
+import dbConnect from "@/lib/mongodb";
 import type { Metadata } from "next";
 import "./globals.css";
-import { ReduxProvider } from "@/app/store/provider";
-import dbConnect from "@/lib/dbConnect";
-import Navbar from "@/components/navbar/navbar";
-import Footer from "@/components/footer/footer";
 
 export const metadata: Metadata = {
   title: "DoorMandi",
@@ -21,7 +20,6 @@ export default function RootLayout({
       <body>
         <link rel="icon" href="/favicon.png" sizes="any" />
           <ReduxProvider>
-            <Navbar />
             {children}
             <Footer />
           </ReduxProvider>
