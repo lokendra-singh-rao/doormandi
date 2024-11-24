@@ -12,7 +12,7 @@ export default auth((req) => {
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
-  console.log("REQUEST LOGGED: path-", nextUrl.pathname, "and auth-", req.auth);
+  console.log(`[${new Date().toISOString()}]: ${req.method} ${nextUrl.pathname} | ${isLoggedIn ? `Authenticated(${req.auth?.user?.email})` : "Unauthenticated"} | ${req.headers.get("x-forwarded-for")}`);
 
   if (isApiAuthRoute) {
     return;
