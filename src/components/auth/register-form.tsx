@@ -28,8 +28,7 @@ export const RegisterForm = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof RegisterSchema>) => {
-    const res = await register(data);
-    console.log("LOGIN RES", res)
+    await register(data);
   }
 
   return (

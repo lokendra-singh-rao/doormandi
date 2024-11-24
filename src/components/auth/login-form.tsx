@@ -42,7 +42,6 @@ export const LoginForm = () => {
     startTransition(async () => {
       try {
         const res = await axiosClient.post("/api/auth/login", data);
-        console.log(res.data);
         if (res.data.success) {
           setSuccess(res.data.message);
           router.push("/profile");

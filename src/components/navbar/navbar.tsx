@@ -4,7 +4,7 @@ import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Input } from "../ui/input";
 import LocationModal from "./location-modal";
 
@@ -129,10 +129,11 @@ export default function Navbar() {
                   <UserCircle size={32} />
               </DropdownMenuTrigger>
               <DropdownMenuContent className="z-[999] w-36" align="end">
-                <DropdownMenuItem className="py-2.5 text-lg"><User2/> Profile</DropdownMenuItem>
-                <DropdownMenuItem className="py-2.5 text-lg"><ListCheck/> Orders </DropdownMenuItem>
-                <DropdownMenuItem className="py-2.5 text-lg"><Settings/> Settings</DropdownMenuItem>
-                <DropdownMenuItem className="py-2.5 text-lg" onClick={handleLogOut}><LogOut/> Logout</DropdownMenuItem>
+                <DropdownMenuItem className="py-2.5 text-[1rem]"><User2/> Profile</DropdownMenuItem>
+                <DropdownMenuItem className="py-2.5 text-[1rem]"><ListCheck/> Orders </DropdownMenuItem>
+                <DropdownMenuItem className="py-2.5 text-[1rem]"><Settings/> Settings</DropdownMenuItem>
+                <DropdownMenuSeparator/>
+                <DropdownMenuItem className="text-[1rem]" onClick={handleLogOut}><LogOut/> Logout</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -154,6 +155,7 @@ export default function Navbar() {
             </span>
           </div>
         </div>
+
         <div className="flex-1 h-full w-full flex md:hidden">
           <div className="relative w-full">
             <Search className="absolute left-3.5 top-2 h-5 w-5" />

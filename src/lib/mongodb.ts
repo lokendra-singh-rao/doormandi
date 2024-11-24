@@ -18,7 +18,6 @@ let cachedConnection: Connection | null = null;
 
 export default async function dbConnect() {
   if (cachedConnection) {
-    console.log("Database already connected");
     return;
   }
 

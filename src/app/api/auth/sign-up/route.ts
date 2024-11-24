@@ -41,7 +41,7 @@ export async function POST(request: Request) {
 
     return success({ data: savedUser, requestId, message: "User registered successfully" });
   } catch (error) {
-    console.log("Error registering user", error);
+    console.error("Error registering user", error);
     return internalServerError({ requestId });
   }
 }

@@ -14,7 +14,7 @@ export default {
         try {
           return credentials;
         } catch (error) {
-          console.log("AUTH ERROR", error);
+          console.error("AUTH ERROR", error);
           return null;
         }
       },

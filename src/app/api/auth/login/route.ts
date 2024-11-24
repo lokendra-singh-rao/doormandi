@@ -44,7 +44,7 @@ export async function POST(request: Request) {
 
     return success({ requestId, message: "Login successful" });
   } catch (error) {
-    console.log("Error registering user", error);
+    console.error("Error registering user", error);
     return internalServerError({ requestId });
   }
 }

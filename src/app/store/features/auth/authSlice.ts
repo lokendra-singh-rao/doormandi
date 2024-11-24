@@ -55,7 +55,6 @@ export const loginUser = createAsyncThunk<User, LoginCredentials>(
   async (credentials: LoginCredentials, { rejectWithValue }) => {
     try {
       const response = await axios.post("/api/user", { ...credentials }, { withCredentials: true });
-      console.log(response)
 
       return response.data.user; // Ensure this matches your API response structure
     } catch (error) {
@@ -70,7 +69,6 @@ export const signUpUser = createAsyncThunk<User, SignupVars>(
   async (signupDetails: SignupVars, { rejectWithValue }) => {
     try {
       const response = await axios.post("/api/auth/sign-up", { ...signupDetails }, { withCredentials: true });
-      console.log(response)
       return response.data.user; // Ensure this matches your API response structure
     } catch (error) {
       return rejectWithValue((error as Error).message || "Login failed");
