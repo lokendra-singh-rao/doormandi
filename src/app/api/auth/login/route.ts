@@ -28,15 +28,15 @@ export async function POST(request: Request) {
       return badRequest({ requestId, message: "Email or Password incorrect" });
     }
 
-    if (!user.emailVerified) {
-      return badRequest({ requestId, message: "Email not verified, check your mailbox for verification email" });
-    }
-
     // Verify password
     const passwordMatch = await bcrypt.compare(password, user.hash);
 
     if (!passwordMatch) {
       return badRequest({ requestId, message: "Email or Password incorrect" });
+    }
+
+    if (!user.emailVerified) {
+      return badRequest({ requestId, message: "Email not verified, check your mailbox for verification email" });
     }
 
     // Generate auth from NextAuth
