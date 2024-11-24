@@ -1,5 +1,6 @@
 "use client";
-import { ChevronDown, Clock8, MapPin, Search, ShoppingCart, UserCircle } from "lucide-react";
+import { ChevronDown, Clock8, ListCheck, LogOut, MapPin, Search, Settings, ShoppingCart, User2, UserCircle } from "lucide-react";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
@@ -58,6 +59,10 @@ export default function Navbar() {
 
   const handleCloseModal = (): void => {
     setIsLocationModalOpen(false);
+  };
+
+  const handleLogOut = () => {
+    signOut();
   };
 
   return (
@@ -123,11 +128,11 @@ export default function Navbar() {
               <DropdownMenuTrigger className="focus-visible:outline-none">
                   <UserCircle size={32} />
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="z-[999]" align="end">
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Orders</DropdownMenuItem>
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuContent className="z-[999] w-36" align="end">
+                <DropdownMenuItem className="py-2.5 text-lg"><User2/> Profile</DropdownMenuItem>
+                <DropdownMenuItem className="py-2.5 text-lg"><ListCheck/> Orders </DropdownMenuItem>
+                <DropdownMenuItem className="py-2.5 text-lg"><Settings/> Settings</DropdownMenuItem>
+                <DropdownMenuItem className="py-2.5 text-lg" onClick={handleLogOut}><LogOut/> Logout</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

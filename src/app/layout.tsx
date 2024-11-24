@@ -19,7 +19,7 @@ export default async function RootLayout({
 }>) {
   dbConnect();
   const session = await auth();
-
+  
   return (
     <html lang="en">
       <body>
