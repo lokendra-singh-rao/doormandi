@@ -1,11 +1,8 @@
 // utils/axiosClient.ts
 import axios, { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000'; // Customize as needed
-
 // Configure the Axios client with cookies enabled
 const axiosClient: AxiosInstance = axios.create({
-  baseURL: API_BASE_URL,
   withCredentials: true, // Ensures cookies are sent with requests
   headers: {
     'Content-Type': 'application/json',
