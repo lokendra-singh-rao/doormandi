@@ -19,13 +19,13 @@ export async function POST(request: Request) {
     }
 
     // Check if user exists by email or phone
-    const existingUser = await getUserByEmailOrPhone({ emailOrPhone: email || phone });
+    const existingUser = await getUserByEmailOrPhone({ email, phone });
 
     const hash = await encryptPassword({ password });
     let savedUser = null;
-
+    
     if (existingUser !== null) {
-      if (existingUser?.emailVerified) {
+      if (existingUser?.emailVerified || existingUser?.phone === phone || existingUser?.email === email) {
         return conflict({ requestId, message: "Email or Phone already exists" });
       } else {
         existingUser.hash = hash;

@@ -50,9 +50,9 @@ export const getUserById = async ({ id }: { id: string }): Promise<IUser | null>
   return await User.findById(id);
 };
 
-export const getUserByEmailOrPhone = async ({ emailOrPhone }: { emailOrPhone: string }): Promise<IUser | null> => {
+export const getUserByEmailOrPhone = async ({ email, phone }: { email: string, phone: string }): Promise<IUser | null> => {
   return await User.findOne({
-    $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+    $or: [{ email: email }, { phone: phone }],
     isDeleted: false,
   });
 };

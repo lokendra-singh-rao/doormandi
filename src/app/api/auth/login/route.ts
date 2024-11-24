@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     }
 
     // Check if user exists by email or phone
-    const user = await getUserByEmailOrPhone({ emailOrPhone: email || phone });
+    const user = await getUserByEmailOrPhone({ email, phone });
 
     if (!user) {
       return badRequest({ requestId, message: "Email or Password incorrect" });
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     // Verify password
     const passwordMatch = await bcrypt.compare(password, user.hash);
 
-    if(!passwordMatch) {
+    if (!passwordMatch) {
       return badRequest({ requestId, message: "Email or Password incorrect" });
     }
 
