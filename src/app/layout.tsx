@@ -6,6 +6,7 @@ import "./globals.css";
 import Navbar from "@/components/navbar/navbar";
 import PublicNavbar from "@/components/navbar/public-navbar";
 import { auth } from "@/auth";
+import { Announcement } from "@/components/home/announcement";
 
 export const metadata: Metadata = {
   title: "DoorMandi",
@@ -26,6 +27,7 @@ export default async function RootLayout({
         <link rel="icon" href="/favicon.png" sizes="any" />
           <ReduxProvider>
           {session ? <Navbar /> : <PublicNavbar />}
+          <Announcement/>
             {children}
             <Footer />
           </ReduxProvider>

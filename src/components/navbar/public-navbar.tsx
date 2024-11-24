@@ -52,7 +52,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="bg-white px-4 py-2 md:py-4 md:px-6 w-full flex relative sm:sticky left-0 top-0 flex-col gap-2 mx-auto shadow-md z-[998]">
+    <nav id="navbar" className="bg-white px-4 py-2 md:py-4 md:px-6 w-full flex sticky left-0 top-0 flex-col gap-2 mx-auto shadow-md z-[998]">
       <div className="w-full mx-auto flex items-center justify-between gap-4 sm:gap-6 lg:gap-8">
         {/* Logo and Location */}
         {/* Logo */}
@@ -179,7 +179,8 @@ export default function Navbar() {
         </DialogContent>
       </Dialog>
 
-      <div className="flex-1 h-full w-full flex md:hidden">
+      {/* Search Bar Mobile */}
+      <div className="flex-1 h-full w-full flex flex-col gap-y-1 md:hidden">
         <div className="relative w-full">
           <Search className="absolute left-3.5 top-2 h-5 w-5" />
           <Input type="text" className="pl-12 pr-4 py-1.5 border w-full border-gray-200 rounded-lg focus:outline-none focus:border-gray-300 bg-gray-50 z-2 peer" onChange={(e) => setSearchQuery(e.target.value)} value={searchQuery} ref={inputRef2} onBlur={() => setInputFocus(false)} />

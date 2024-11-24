@@ -58,7 +58,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white px-4 py-2 md:py-4 md:px-6 w-full flex relative sm:sticky left-0 top-0 flex-col gap-2 mx-auto shadow-md z-[998]">
+    <nav id="navbar" className="bg-white px-4 py-2 md:py-4 md:px-6 w-full flex sticky left-0 top-0 flex-col gap-2 mx-auto shadow-md z-[998]">
       <div className="w-full mx-auto flex items-center justify-between gap-4 sm:gap-6 lg:gap-8">
         {/* Logo and Location */}
         {/* Logo */}
