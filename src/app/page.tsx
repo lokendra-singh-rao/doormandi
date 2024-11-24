@@ -8,7 +8,7 @@ import HowItWorks from "@/components/home/how-it-works";
 export default async function Home() {
 
   return (
-    <div>
+    <div className="space-y-6">
       <Hero />
       <Categories/>
       <FeaturedSection />

@@ -17,12 +17,12 @@ export default function FeaturedSection() {
     { title: "Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" },
   ];
   return (
-    <section className="px-10 py-8 flex flex-col gap-y-4">
-      <h1 className="text-3xl font-bold">Featured</h1>
+    <section className="px-0 md:px-10 flex flex-col gap-y-4">
+      <h1 className="px-4 md:px-10 text-3xl font-bold">Featured</h1>
       <Carousel className="w-full">
         <CarouselContent className="-ml-1">
           {featuredProducts.map((product, index) => (
-            <CarouselItem key={index} className="pl-1 basis-10/12 xs:basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/6">
+            <CarouselItem key={index} className="pl-1 basis-2/3 xs:basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/6">
               <div className="p-1">
                 <ProductCard product={product} />
               </div>
