@@ -9,7 +9,7 @@ export const Categories = () => {
   ];
 
   return (
-    <section className="px-4 md:px-10 flex flex-col gap-y-4">
+    <section className="px-4 lg:px-10 flex flex-col gap-y-4">
       <h1 className="text-3xl font-bold">Categories</h1>
       <div className="flex gap-x-4 flex-wrap">
         {categories.map((category, index) => (

@@ -16,7 +16,7 @@ export const ProductCard = ({ product }: { product: ProductCardProps }) => {
   return (
     <Card>
       <CardContent className="relative pb-4">
-        <div className="h-full w-full">
+        <div className="h-full w-full flex justify-center">
           <Image className="p-3" src={product.imageUrl} alt={product.title} width={180} height={180} loading="lazy" />
         </div>
         <h1 className="font-semibold text-sm">{product.title}</h1>
