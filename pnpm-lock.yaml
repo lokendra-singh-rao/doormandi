@@ -3320,11 +3320,8 @@ snapshots:
 
   detect-libc@2.0.3:
     optional: true
-<<<<<<< HEAD
 
   detect-node-es@1.1.0: {}
-=======
->>>>>>> b1c6dd280ffaed4136badf72a2802d46d1277199
 
   didyoumean@1.2.2: {}
 

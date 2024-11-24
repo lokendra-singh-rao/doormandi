@@ -3,13 +3,9 @@ import { ChevronDown, Clock8, MapPin, Search, ShoppingCart, UserCircle } from "l
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
-<<<<<<< HEAD
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Input } from "../ui/input";
 import LocationModal from "./location-modal";
-=======
-import { Input } from "../ui/input";
->>>>>>> b1c6dd280ffaed4136badf72a2802d46d1277199
 
 interface AddressType {
   houseNo: number;
@@ -117,23 +113,14 @@ export default function Navbar() {
           </div>
 
           {/* Login and Cart */}
-<<<<<<< HEAD
           <div className="flex items-center gap-6">
-            <Button className="flex items-center" variant={"outline"} size={"icon"}>
+            <Button className="[&_svg]:size-7" variant={"ghost"} size={"icon"}>
               <Link href={"/cart"}>
-                <ShoppingCart />
+                <ShoppingCart size={7}/>
               </Link>
-=======
-          <div className="flex items-center gap-4">
-            <Button className="flex items-center" variant={"outline"}>
-              <Link href={"/cart"}><ShoppingCart className="h-6 w-6" /></Link>
-            </Button>
-            <Button>
-              <Link href={"/login"}>Login</Link>
->>>>>>> b1c6dd280ffaed4136badf72a2802d46d1277199
             </Button>
             <DropdownMenu>
-              <DropdownMenuTrigger className="focus-visible:">
+              <DropdownMenuTrigger className="focus-visible:outline-none">
                   <UserCircle size={32} />
               </DropdownMenuTrigger>
               <DropdownMenuContent className="z-[999]" align="end">

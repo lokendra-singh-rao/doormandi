@@ -3,23 +3,29 @@ import Footer from "@/components/footer/footer";
 import dbConnect from "@/lib/mongodb";
 import type { Metadata } from "next";
 import "./globals.css";
+import Navbar from "@/components/navbar/navbar";
+import PublicNavbar from "@/components/navbar/public-navbar";
+import { auth } from "@/auth";
 
 export const metadata: Metadata = {
   title: "DoorMandi",
   description: "Doormandi is your go-to app for fresh vegetable and fruit delivery, bringing farm-fresh produce straight to your doorstep. With a user-friendly interface, Doormandi allows you to explore a wide variety of high-quality fruits and vegetables sourced from local farms, ensuring freshness and sustainability. Enjoy hassle-free ordering, same-day delivery, and a commitment to healthy, delicious food right from your phone. Whether you’re stocking up for the week or craving seasonal fruits, Doormandi makes healthy eating convenient and accessible.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   dbConnect();
+  const session = await auth();
+
   return (
     <html lang="en">
       <body>
         <link rel="icon" href="/favicon.png" sizes="any" />
           <ReduxProvider>
+          {session ? <Navbar /> : <PublicNavbar />}
             {children}
             <Footer />
           </ReduxProvider>
