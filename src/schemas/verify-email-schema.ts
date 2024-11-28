@@ -1,7 +1,7 @@
 import {z} from "zod"
 
 const VerifyEmailSchema = z.object({
-    token: z.string()
+    email: z.string().email(),
 });
 
 export default VerifyEmailSchema;

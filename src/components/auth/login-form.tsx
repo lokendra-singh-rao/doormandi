@@ -13,11 +13,11 @@ import { FormError } from "./form-error";
 import { FormSuccess } from "./form-success";
 import axiosClient from "@/utils/axiosClient";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export const LoginForm = () => {
   const router = useRouter();
-
+  const [redirect] = useSearchParams().getAll("redirect");
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -44,7 +44,11 @@ export const LoginForm = () => {
         const res = await axiosClient.post("/api/auth/login", data);
         if (res.data.success) {
           setSuccess(res.data.message);
-          router.push("/profile");
+          if(redirect) {
+            router.push(redirect);
+          } else {
+            router.push("/profile");
+          }
         }
       } catch (error: unknown) {
         console.error("LOGIN ERROR", error);

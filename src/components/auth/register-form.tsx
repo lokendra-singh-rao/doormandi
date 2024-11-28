@@ -22,7 +22,7 @@ export const RegisterForm = () => {
   const title = "Get started!";
   const subtitle = "Register using Email";
   const linkLabels = ["Already have an account?", "Verify email?"];
-  const linkHrefs = ["/login", "verify-email"];
+  const linkHrefs = ["/login", "/verify-email?p=resend"];
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
