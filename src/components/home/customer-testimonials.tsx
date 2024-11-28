@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import Marquee from "../ui/marquee";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
