@@ -150,18 +150,29 @@ export default function Navbar() {
                 <SheetDescription className="text-center">View and manage your selected items before proceeding to a quick and secure checkout.</SheetDescription>
               </SheetHeader>
               <ScrollArea className="flex-1">
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <Separator text="" />
                   <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <Separator text="" />
                   <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <Separator text="" />
                   <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <Separator text="" />
                   <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <Separator text="" />
                   <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <Separator text="" />
                   <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <Separator text="" />
                   <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <Separator text="" />
                   <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <Separator text="" />
                   <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <Separator text="" />
                   <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <Separator text="" />
                   <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
                 </div>
               </ScrollArea>
