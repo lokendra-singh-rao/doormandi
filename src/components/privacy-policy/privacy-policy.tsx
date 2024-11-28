@@ -23,7 +23,7 @@ export const PrivacyPolicy = () => {
       <section>
         <h2 className="font-semibold text-lg">2. Information We Collect</h2>
         <p>We collect and process the following types of information:</p>
-        <div>
+        <div className="space-y-2">
           <div>
             <p>a. Personal Information:</p>
             <div className="ml-4">
@@ -58,7 +58,7 @@ export const PrivacyPolicy = () => {
       <section>
         <h2 className="font-semibold text-lg">3. How We Use Your Information</h2>
         <p>We use the collected information for the following purposes:</p>
-        <div>
+        <div className="space-y-2">
           <p>- Order Fulfillment: To process and deliver your orders.</p>
           <p>- Customer Support: To respond to your inquiries and resolve issues.</p>
           <p>- Security: To detect and prevent fraudulent activities and unauthorized access.</p>
@@ -71,6 +71,7 @@ export const PrivacyPolicy = () => {
       <section>
         <h2 className="font-semibold text-lg">4. Sharing Your Information</h2>
         <p>We do not sell, trade, or rent your personal information to third parties. However, we may share your information in the following cases:</p>
+        <div className="space-y-2">
         <div>
           <p>a. Service Providers:</p>
           <p>With third-party vendors who assist in delivering our services (e.g., payment processors, delivery partners).</p>
@@ -82,7 +83,7 @@ export const PrivacyPolicy = () => {
         <div>
           <p>c. Business Transfers:</p>
           <p>In the event of a merger, acquisition, or sale of assets, your information may be transferred as part of that transaction.</p>
-        </div>
+        </div></div>
       </section>
       <br />
       {/* SECTION 5. DATA SECURITY */}
@@ -101,13 +102,13 @@ export const PrivacyPolicy = () => {
       <section>
         <h2 className="font-semibold text-lg">7. Your Rights</h2>
         <p>Under Indian laws, you have the following rights regarding your personal data:</p>
-        <div>
+        <div className="space-y-2">
           <p>- Access and review the data we collect about you.</p>
           <p>- Request correction of inaccurate or incomplete data.</p>
           <p>- Withdraw consent for processing personal data (subject to limitations).</p>
           <p>- Request deletion of your personal data (subject to legal and contractual obligations).</p>
-        </div>
         <p>To exercise your rights, contact us at [privacy@doormandi.com].</p>
+        </div>
       </section>
       <br />
       {/* SECTION 8. COOKIES AND TRACKING TECHNOLOGIES */}
@@ -143,6 +144,7 @@ export const PrivacyPolicy = () => {
       <section>
         <h2 className="font-semibold text-lg">Compliance with Indian Laws:</h2>
         <p>This Privacy Policy complies with applicable Indian data protection laws, including the Information Technology (Reasonable Security Practices and Procedures and Sensitive Personal Data or Information) Rules, 2011, under the Information Technology Act, 2000.</p>
+        <br />
         <p>By using our services, you consent to the collection, use, and sharing of your information as described in this Privacy Policy.</p>
       </section>
     </div>
