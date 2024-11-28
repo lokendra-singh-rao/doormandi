@@ -14,6 +14,7 @@ import { FormSuccess } from "./form-success";
 import axiosClient from "@/utils/axiosClient";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
+import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 
 export const LoginForm = () => {
   const router = useRouter();
@@ -47,7 +48,7 @@ export const LoginForm = () => {
           if(redirect) {
             router.push(redirect);
           } else {
-            router.push("/profile");
+            router.push(DEFAULT_LOGIN_REDIRECT);
           }
         }
       } catch (error: unknown) {
