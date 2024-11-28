@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 
-export default async function Profile() {
+const ProfilePage = async () => {
   
   const session = await auth();
 
@@ -10,3 +10,5 @@ export default async function Profile() {
     </div>
   );
 }
+
+export default ProfilePage;
