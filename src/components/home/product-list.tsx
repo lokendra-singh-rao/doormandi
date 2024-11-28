@@ -15,11 +15,16 @@ export default function ProductList({ title, products }: { title: string; produc
   return (
     <section id={title.toLowerCase().split(" ").join("-")} className="px-0 lg:px-10 flex flex-col gap-y-2">
       <h1 className="px-4 lg:px-0 text-2xl xs:text-3xl font-bold">{title}</h1>
-      <Carousel className="w-full">
+      <Carousel
+        opts={{
+          dragFree: true
+        }}
+        className="w-full"
+      >
         <CarouselContent className="-ml-1">
           {products.map((product, index) => (
-            <CarouselItem key={index} className="pl-1 basis-[55%] xs:basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/6">
-              <div className="p-1">
+            <CarouselItem key={index} className="pl-1 basis-[50%] xs:basis-[40%] sm:basis-[30%] md:basis-[20%] lg:basis-1/6 xl:basis-[15%]">
+              <div className="p-0.5 xs:p-1">
                 <ProductCard product={product} />
               </div>
             </CarouselItem>
