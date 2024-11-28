@@ -1,16 +1,16 @@
 "use client";
-import { ChevronDown, Clock8, ListCheck, Locate, LogOut, MapPin, Search, Settings, ShoppingBag, ShoppingCart, User2, UserCircle } from "lucide-react";
+import { ChevronDown, Clock8, ListCheck, Locate, LogOut, MapPin, Search, Settings, ShoppingBasket, ShoppingCart, User2, UserCircle } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
+import { CartItem } from "../ui/cart-item";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Input } from "../ui/input";
+import { ScrollArea } from "../ui/scroll-area";
 import Separator from "../ui/separator";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
-import { CartItem } from "../ui/cart-item";
-import { ScrollArea } from "../ui/scroll-area";
 
 interface AddressType {
   houseNo: number;
@@ -142,41 +142,22 @@ export default function Navbar() {
                 <ShoppingCart size={7} />
               </Button>
             </SheetTrigger>
-            <SheetContent className="flex flex-col items-stretch justify-between z-[1000]">
-              <SheetHeader>
-                <SheetTitle className="flex gap-2 items-center justify-center font-bold text-3xl">
-                  Your Bag <ShoppingBag size={36} />{" "}
+            <SheetContent className="p-0 flex flex-col items-stretch justify-between z-[1000]">
+              <SheetHeader className="bg-green-100 p-4">
+                <SheetTitle className="flex gap-2 items-center text-green-600 justify-center font-bold text-3xl">
+                  Your Bag <ShoppingBasket size={36} />{" "}
                 </SheetTitle>
                 <SheetDescription className="text-center">View and manage your selected items before proceeding to a quick and secure checkout.</SheetDescription>
               </SheetHeader>
-              <ScrollArea className="flex-1">
-                <div className="space-y-1">
+              <ScrollArea className="flex-1 px-4">
+                <div className="space-y-2">
                   <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
-                  <Separator text="" />
                   <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
-                  <Separator text="" />
                   <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
-                  <Separator text="" />
-                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
-                  <Separator text="" />
-                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
-                  <Separator text="" />
-                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
-                  <Separator text="" />
-                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
-                  <Separator text="" />
-                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
-                  <Separator text="" />
-                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
-                  <Separator text="" />
-                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
-                  <Separator text="" />
-                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
-                  <Separator text="" />
                   <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
                 </div>
               </ScrollArea>
-              <SheetFooter>
+              <SheetFooter className="px-4 pb-2">
                 <SheetClose asChild>
                   <Button type="submit" className="w-full" size={"lg"}>
                     Secure Checkout

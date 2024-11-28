@@ -16,6 +16,7 @@ export interface IPrice extends Document {
     weight: number;
   }[];
   cityId: { type: string, required: true },
+  maximumOrderQuantity: number;
 }
 
 const PriceSchema: Schema<IPrice> = new Schema(
