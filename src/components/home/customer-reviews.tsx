@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import Marquee from "../ui/marquee";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
-export default function CustomerTestimonials() {
+export default function CustomerReviews() {
   const reviews1 = [
     { text: "Amazing quality and fast delivery! Love the freshness.", author: "Jitendra Singh", username: "jitzzz" },
     { text: "Doormandi makes healthy eating so convenient.", author: "Ayushi Badika", username: "ayushi" },

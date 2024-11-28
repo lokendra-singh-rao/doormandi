@@ -32,7 +32,7 @@ export default function Hero() {
         <CarouselContent>
           {slides.map((slide, index) => (
             <CarouselItem key={index}>
-              <Image src={slide.image} alt={slide.title} width={1920} height={1080} className="md:rounded-none rounded-lg" />
+              <Image src={slide.image} alt={slide.title} width={1600} height={900} className="md:rounded-none rounded-lg" />
             </CarouselItem>
           ))}
         </CarouselContent>

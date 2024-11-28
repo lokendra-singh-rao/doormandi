@@ -1,6 +1,6 @@
 import AboutUs from "@/components/home/about-us";
 import { Categories } from "@/components/home/categories";
-import CustomerTestimonials from "@/components/home/customer-testimonials";
+import CustomerReviews from "@/components/home/customer-reviews";
 import Hero from "@/components/home/hero";
 import ProductList from "@/components/home/product-list";
 
@@ -75,7 +75,7 @@ export default async function Home() {
       <ProductList title="Exotic Vegetables" products={exoticVegetables}/>
       <ProductList title="Exotic Fruits" products={exoticFruits}/>
       {/* <HowItWorks /> */}
-      <CustomerTestimonials />
+      <CustomerReviews />
       <AboutUs />
     </div>
   );

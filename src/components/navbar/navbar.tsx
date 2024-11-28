@@ -1,5 +1,5 @@
 "use client";
-import { ChevronDown, Clock8, ListCheck, Locate, LogOut, MapPin, Search, Settings, ShoppingCart, User2, UserCircle } from "lucide-react";
+import { ChevronDown, Clock8, ListCheck, Locate, LogOut, MapPin, Search, Settings, ShoppingBag, ShoppingCart, User2, UserCircle } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -8,6 +8,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Input } from "../ui/input";
 import Separator from "../ui/separator";
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
+import { CartItem } from "../ui/cart-item";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface AddressType {
   houseNo: number;
@@ -133,11 +136,45 @@ export default function Navbar() {
 
         {/* Login and Cart */}
         <div className="flex items-center gap-6">
-          <Button className="[&_svg]:size-7" variant={"ghost"} size={"icon"}>
-            <Link href={"/cart"}>
-              <ShoppingCart size={7} />
-            </Link>
-          </Button>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button className="[&_svg]:size-7" variant={"ghost"} size={"icon"}>
+                <ShoppingCart size={7} />
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="flex flex-col items-stretch justify-between z-[1000]">
+              <SheetHeader>
+                <SheetTitle className="flex gap-2 items-center justify-center font-bold text-3xl">
+                  Your Bag <ShoppingBag size={36} />{" "}
+                </SheetTitle>
+                <SheetDescription className="text-center">View and manage your selected items before proceeding to a quick and secure checkout.</SheetDescription>
+              </SheetHeader>
+              <ScrollArea className="flex-1">
+                <div className="space-y-2">
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                </div>
+              </ScrollArea>
+              <SheetFooter>
+                <SheetClose asChild>
+                  <Button type="submit" className="w-full" size={"lg"}>
+                    Secure Checkout
+                  </Button>
+                </SheetClose>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
+
           <DropdownMenu>
             <DropdownMenuTrigger className="focus-visible:outline-none">
               <UserCircle size={32} />
@@ -162,7 +199,7 @@ export default function Navbar() {
       </div>
 
       {/* Location Dialog Mobile */}
-      <Dialog >
+      <Dialog>
         <DialogTrigger>
           <div className="font-medium w-full text-gray-800 flex items-center sm:hidden justify-between">
             <div className="flex items-center w-full gap-1 xs:gap-2 text-base justify-between sm:text-lg">
