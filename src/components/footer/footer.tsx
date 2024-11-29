@@ -110,7 +110,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="/terms" className="text-gray-400 hover:text-gray-100 transition">
+                <a href="/terms-of-service" className="text-gray-400 hover:text-gray-100 transition">
                   Terms of Service
                 </a>
               </li>

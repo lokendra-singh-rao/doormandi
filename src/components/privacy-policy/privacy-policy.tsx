@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Poppins } from "next/font/google";
+import Link from "next/link";
 
 const font = Poppins({
   weight: ["600"],
@@ -9,7 +10,7 @@ const font = Poppins({
 export const PrivacyPolicy = () => {
   return (
     <div className="max-w-[54rem] px-4 text-justify">
-      <h1 className={cn("mb-2 text-left text-2xl md:text-4xl lg:text-5xl", font.className)}>Privacy Policy for DoorMandi</h1>
+      <h1 className={cn("mb-2 text-left text-2xl md:text-4xl lg:text-[2.5rem]", font.className)}>Privacy Policy for DoorMandi</h1>
       <p className="text-gray-600">Effective Date : November 29,2024</p>
       <p className="text-gray-600">Last Updated On: November 29,2024</p>
       <br />
@@ -72,18 +73,19 @@ export const PrivacyPolicy = () => {
         <h2 className="font-semibold text-lg">4. Sharing Your Information</h2>
         <p>We do not sell, trade, or rent your personal information to third parties. However, we may share your information in the following cases:</p>
         <div className="space-y-2">
-        <div>
-          <p>a. Service Providers:</p>
-          <p>With third-party vendors who assist in delivering our services (e.g., payment processors, delivery partners).</p>
+          <div>
+            <p>a. Service Providers:</p>
+            <p>With third-party vendors who assist in delivering our services (e.g., payment processors, delivery partners).</p>
+          </div>
+          <div>
+            <p>b. Legal Requirements:</p>
+            <p>To comply with legal obligations, respond to lawful requests from public authorities, or protect our rights.</p>
+          </div>
+          <div>
+            <p>c. Business Transfers:</p>
+            <p>In the event of a merger, acquisition, or sale of assets, your information may be transferred as part of that transaction.</p>
+          </div>
         </div>
-        <div>
-          <p>b. Legal Requirements:</p>
-          <p>To comply with legal obligations, respond to lawful requests from public authorities, or protect our rights.</p>
-        </div>
-        <div>
-          <p>c. Business Transfers:</p>
-          <p>In the event of a merger, acquisition, or sale of assets, your information may be transferred as part of that transaction.</p>
-        </div></div>
       </section>
       <br />
       {/* SECTION 5. DATA SECURITY */}
@@ -107,7 +109,7 @@ export const PrivacyPolicy = () => {
           <p>- Request correction of inaccurate or incomplete data.</p>
           <p>- Withdraw consent for processing personal data (subject to limitations).</p>
           <p>- Request deletion of your personal data (subject to legal and contractual obligations).</p>
-        <p>To exercise your rights, contact us at [privacy@doormandi.com].</p>
+          <p>To exercise your rights, contact us at [privacy@doormandi.com].</p>
         </div>
       </section>
       <br />
@@ -134,7 +136,13 @@ export const PrivacyPolicy = () => {
         <h2 className="font-semibold text-lg">11. Contact Us</h2>
         <p>If you have any questions or concerns about this Privacy Policy, please contact us at:</p>
         <div>
-          <p>Email: [privacy@doormandi.com]</p>
+          <p>
+            Email: [
+            <Link className="text-blue-800" href={"mailto:terms@doormandi.com"}>
+              privacy@doormandi.com
+            </Link>
+            ]
+          </p>
           <p>Phone: [+91 7788998877]</p>
           <p>Address: [41, Street, City, State, India]</p>
         </div>
