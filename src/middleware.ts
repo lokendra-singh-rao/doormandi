@@ -1,6 +1,8 @@
+
+import { authRoutes, publicRoutes, apiAuthPrefix, DEFAULT_LOGIN_REDIRECT } from "@/routes";
+
 import authConfig from "@/auth.config";
 import NextAuth from "next-auth";
-import { authRoutes, publicRoutes, apiAuthPrefix, DEFAULT_LOGIN_REDIRECT } from "@/routes";
 
 const { auth } = NextAuth(authConfig);
 
@@ -12,7 +14,7 @@ export default auth((req) => {
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
-  console.info(`[${new Date().toISOString()}]: ${req.method} ${nextUrl.pathname} | ${isLoggedIn ? `Authenticated(${req.auth?.user?.email})` : "Unauthenticated"} | ${req.headers.get("x-forwarded-for")}`);
+  // console.info(`[${new Date().toISOString()}]: ${req.method} ${nextUrl.pathname} | ${isLoggedIn ? `Authenticated(${req.auth?.user?.email})` : "Unauthenticated"} | ${req.headers.get("x-forwarded-for")}`);
 
   if (isApiAuthRoute) {
     return;

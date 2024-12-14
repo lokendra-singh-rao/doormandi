@@ -12,7 +12,12 @@ export default {
       type: "credentials",
       async authorize(credentials) {
         try {
-          return credentials;
+          const user = {
+            id: credentials.id as string,
+            name: credentials.name as string,
+            email: credentials.email as string,
+          }
+          return user;
         } catch (error) {
           console.error("AUTH ERROR", error);
           return null;

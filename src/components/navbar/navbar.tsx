@@ -155,6 +155,18 @@ export default function Navbar() {
                   <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
                   <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
                   <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
+                  <CartItem product={{ title: "Kashmiri Apples", orginalPrice: 200, discount: 40, salePrice: 160, qauntity: 1, unit: "kg", imageUrl: "/apple.jpg" }} />
                 </div>
               </ScrollArea>
               <SheetFooter className="px-4 pb-2">

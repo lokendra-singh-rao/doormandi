@@ -17,7 +17,7 @@ export default function ProductList({ title, products }: { title: string; produc
       <h1 className="px-4 lg:px-0 text-2xl xs:text-3xl font-bold">{title}</h1>
       <Carousel
         opts={{
-          dragFree: true
+          dragFree: true,
         }}
         className="w-full"
       >

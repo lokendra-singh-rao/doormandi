@@ -173,7 +173,7 @@ export const TermsOfService = () => {
           <p>Address: [41, Street, City, State, India]</p>
         </div>
       </section>
-
+      <br />
       {/* COMPLIANCE WITH INDIAN LAWS */}
       <section>
         <h2 className="font-semibold text-lg">Compliance with Indian Laws:</h2>

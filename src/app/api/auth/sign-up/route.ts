@@ -1,12 +1,13 @@
-import dbConnect from "@/lib/mongodb";
 import { badRequest, conflict, internalServerError, success } from "@/types/ApiResponse";
 import { randomUUID } from "crypto";
 import { encryptPassword, generateVerificationToken, sendVerificationEmail, validateSignUpData } from "./service";
 import { ZodError } from "zod";
 import { createUser, getUserByEmailOrPhone, saveUser } from "@/models/user.model";
+import client from "@/lib/mongodb";
+import dbConnect from "@/lib/mongodb";
 
 export async function POST(request: Request) {
-  await dbConnect();
+  await dbConnect()
   const requestId = randomUUID();
   try {
     const { fullname, phone, email, password } = await request.json();

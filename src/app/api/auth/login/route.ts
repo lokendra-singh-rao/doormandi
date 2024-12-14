@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     }
 
     // Generate auth from NextAuth
-    await signIn("credentials", { ...{ name: user.fullname, email }, redirect: false });
+    await signIn("credentials", { ...{ id: user._id, name: user.fullname, email: user.email }, redirect: false });
 
     return success({ requestId, message: "Login successful" });
   } catch (error) {

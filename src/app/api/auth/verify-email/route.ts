@@ -1,9 +1,10 @@
-import dbConnect from "@/lib/mongodb";
 import { badRequest, internalServerError, notFound, success } from "@/types/ApiResponse";
 import { randomUUID } from "crypto";
 import { sendVerificationEmail, validateVerifyEmailData, verifyToken } from "./services";
 import { ZodError } from "zod";
 import { getUserById } from "@/models/user.model";
+import client from "@/lib/mongodb";
+import dbConnect from "@/lib/mongodb";
 
 export async function POST(request: Request) {
   await dbConnect();

@@ -1,6 +1,5 @@
 import { ReduxProvider } from "@/app/store/provider";
 import Footer from "@/components/footer/footer";
-import dbConnect from "@/lib/mongodb";
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/navbar/navbar";
@@ -18,7 +17,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  dbConnect();
   const session = await auth();
   
   return (
@@ -29,7 +27,7 @@ export default async function RootLayout({
           <Announcement/>
           {session ? <Navbar /> : <PublicNavbar />}
             {children}
-            <Footer />
+            {/* <Footer /> */}
           </ReduxProvider>
       </body>
     </html>
