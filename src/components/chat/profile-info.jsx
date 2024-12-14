@@ -20,7 +20,6 @@ export const ProfileInfo = ({ profiles, setShowProfileInfo, selectedChatroom }) 
     { url: "https://example.com", name: "Example Link 2" },
     { url: "https://example.com", name: "Example Link 3" },
   ];
-  console.log("PRofile to show", profiles[selectedChatroom?.id]);
   
   if(!profiles[selectedChatroom?.id]) return null;
 

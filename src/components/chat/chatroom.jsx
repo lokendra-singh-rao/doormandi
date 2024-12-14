@@ -261,7 +261,26 @@ export const ChatRoom = ({ selectedChatroom, setSelectedChatroom, showProfileInf
           </Popover>
           <form
             className="flex w-full items-center space-x-1"
-            onSubmit={async (e) => {
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && e.shiftKey) {
+                return;
+              } else if (e.key === "Enter") {
+                e.preventDefault();
+                if (inputMessage.trim().length <= 0) {
+                  return;
+                }
+                scrollToBottom("smooth");
+                setInputMessage("");
+                setEditActive(false);
+                setEditMessageRef(null);
+                if (editActive) {
+                  editMessage({ chatroomId: selectedChatroom.id, messageId: editMessageRef.id, newContent: inputMessage.trim(), fromId: userId });
+                } else {
+                  sendMessage({ chatroomId: selectedChatroom.id, fromId: userId, message: inputMessage.trim() });
+                }
+              }
+            }}
+            onSubmit={(e) => {
               e.preventDefault();
               if (inputMessage.trim().length <= 0) {
                 return;
@@ -271,9 +290,9 @@ export const ChatRoom = ({ selectedChatroom, setSelectedChatroom, showProfileInf
               setEditActive(false);
               setEditMessageRef(null);
               if (editActive) {
-                await editMessage({ chatroomId: selectedChatroom.id, messageId: editMessageRef.id, newContent: inputMessage, fromId: userId });
+                editMessage({ chatroomId: selectedChatroom.id, messageId: editMessageRef.id, newContent: inputMessage.trim(), fromId: userId });
               } else {
-                await sendMessage({ chatroomId: selectedChatroom.id, fromId: userId, message: inputMessage });
+                sendMessage({ chatroomId: selectedChatroom.id, fromId: userId, message: inputMessage.trim() });
               }
             }}
           >
@@ -304,9 +323,9 @@ export const ChatRoom = ({ selectedChatroom, setSelectedChatroom, showProfileInf
                   </Button>
                 </div>
               )}
-              <Textarea ref={inputRef} className={`resize-none outline-none flex-1 ${editActive && "rounded-t-none border-l-4 border-l-blue-300"}`} id="message" placeholder="Type your message..." value={inputMessage} onChange={(e) => setInputMessage(e.target.value)} autoComplete="off" />
+              <Textarea ref={inputRef} className={`resize-none py-1 outline-none flex-1 ${editActive && "rounded-t-none border-l-4 border-l-blue-300"}`} id="message" placeholder="Type your message..." value={inputMessage} onChange={(e) => setInputMessage(e.target.value)} autoComplete="off" />
             </div>
-            <Button type="submit" variant="ghost" size="icon" className="[&_svg]:size-5">
+            <Button type="submit" variant="ghost" disabled={inputMessage.trim().length < 1} size="icon" className="[&_svg]:size-5">
               <Send className="text-[#00203f]" />
               <span className="sr-only">Send</span>
             </Button>
