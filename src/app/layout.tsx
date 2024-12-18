@@ -27,7 +27,7 @@ export default async function RootLayout({
           <Announcement/>
           {session ? <Navbar /> : <PublicNavbar />}
             {children}
-            <Footer />
+            {/* <Footer /> */}
           </ReduxProvider>
       </body>
     </html>

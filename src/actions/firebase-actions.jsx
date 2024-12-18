@@ -1,9 +1,8 @@
 import { addDoc, collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, serverTimestamp, updateDoc, where, writeBatch } from "firebase/firestore";
 import { db } from "../lib/firebase";
 
-export const fetchChatrooms = async ({ userId, setChatrooms }) => {
+export const fetchChatrooms = async ({ userId, setChatrooms, setArchivedChatrooms, setStarredChatrooms, setUnreadChatrooms }) => {
   const q = query(collection(db, "Chatrooms"), where("members", "array-contains", userId), orderBy("lastMessage.sentAt", "desc"));
-
   onSnapshot(
     q,
     (snapshot) => {
@@ -13,7 +12,18 @@ export const fetchChatrooms = async ({ userId, setChatrooms }) => {
           ...doc.data(),
         };
       });
-      setChatrooms(fetchedChatrooms);
+
+      const nonArchivedChatrooms = fetchedChatrooms.filter((chatroom) => !chatroom.archivedBy.includes(userId));
+      setChatrooms(nonArchivedChatrooms);
+
+      const unreadChatrooms = nonArchivedChatrooms.filter((chatroom) => chatroom.lastMessage.senderId !== userId && chatroom.lastMessage.readStatus === false);
+      setUnreadChatrooms(unreadChatrooms);
+
+      const starredChatrooms = fetchedChatrooms.filter((chatroom) => chatroom.starredBy.includes(userId));
+      setStarredChatrooms(starredChatrooms);
+
+      const archivedChatrooms = fetchedChatrooms.filter((chatroom) => chatroom.archivedBy.includes(userId));
+      setArchivedChatrooms(archivedChatrooms);
     },
     (error) => {
       console.error("Error fetching chatrooms: ", error);
@@ -47,6 +57,8 @@ export const createChatroom = async () => {
   console.log("Creating chatroom");
   const chatroom = {
     members: ["123", "999"],
+    starredBy: [],
+    archivedBy: [],
     createdAt: serverTimestamp(),
     fromId: "123",
     toId: "369",
@@ -229,7 +241,7 @@ export const markChatroomAsArchived = async ({ selectedChatroom, userId }) => {
   const chatroomRef = doc(db, "Chatrooms", selectedChatroom?.id);
   try {
     await updateDoc(chatroomRef, {
-      archievedBy: [...selectedChatroom.archievedBy, userId],
+      archivedBy: [...selectedChatroom.archivedBy, userId],
     });
     console.log("Chatroom archived successfully.");
   } catch (e) {
@@ -243,16 +255,16 @@ export const markChatroomAsUnarchived = async ({ selectedChatroom, userId }) => 
   const chatroomRef = doc(db, "Chatrooms", selectedChatroom?.id);
   try {
     await updateDoc(chatroomRef, {
-      archievedBy: selectedChatroom.archievedBy.filter((id) => id !== userId),
+      archivedBy: selectedChatroom.archivedBy.filter((id) => id !== userId),
     });
     console.log("Chatroom unarchived successfully.");
   } catch (e) {
     console.error("Error unarchiving chatroom: ", e);
   }
-}
+};
 
-export const getArchievedChatrooms = async ({ userId, setArchievedChatrooms }) => {
-  const q = query(collection(db, "Chatrooms"), where("archievedBy", "array-contains", userId), orderBy("lastMessage.sentAt", "desc"));
+export const getArchivedChatrooms = async ({ userId, setArchivedChatrooms }) => {
+  const q = query(collection(db, "Chatrooms"), where("archivedBy", "array-contains", userId), orderBy("lastMessage.sentAt", "desc"));
 
   onSnapshot(
     q,
@@ -263,10 +275,10 @@ export const getArchievedChatrooms = async ({ userId, setArchievedChatrooms }) =
           ...doc.data(),
         };
       });
-      setArchievedChatrooms(fetchedChatrooms);
+      setArchivedChatrooms(fetchedChatrooms);
     },
     (error) => {
-      console.error("Error fetching archieved chatrooms: ", error);
+      console.error("Error fetching archived chatrooms: ", error);
     }
   );
 };
@@ -317,4 +329,4 @@ export const getStarredChatrooms = async ({ userId, setStarredChatrooms }) => {
       console.error("Error fetching starred chatrooms: ", error);
     }
   );
-}
+};

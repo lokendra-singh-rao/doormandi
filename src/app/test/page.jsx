@@ -9,7 +9,7 @@ function page() {
   });
 
   const handleSubmit = (e) => {
-    setTask(...task, id: new Date());
+    setTask({...task, id: new Date()});
     
     setTasks([...tasks, task]);
     setTask({ id: "", task: "", status: "" });
