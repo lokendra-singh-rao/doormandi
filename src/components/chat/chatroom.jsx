@@ -3,19 +3,23 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn, formatDate } from "@/lib/utils";
+import axios from "axios";
 import EmojiPicker from "emoji-picker-react";
-import { ArrowDown, ArrowLeft, CalendarPlus, CheckCheck, ChevronDown, ChevronUp, Copy, EllipsisVerticalIcon, MessageCircleOff, PanelRightClose, PanelRightOpen, Pencil, PencilIcon, PlusCircle, Search, Send, Smile, Star, Trash, Undo, Video, X } from "lucide-react";
+import { ArrowDown, ArrowLeft, CalendarPlus, CheckCheck, ChevronDown, ChevronUp, Copy, EllipsisVerticalIcon, MessageCircleOff, PanelRightClose, PanelRightOpen, Paperclip, Pencil, PencilIcon, Search, Send, Smile, Star, Trash, Undo, Video, X } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "../ui/context-menu";
 import { Input } from "../ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import Separator from "../ui/separator";
 import { Skeleton } from "../ui/skeleton";
 import { Textarea } from "../ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import { FilePreview } from "./file-preview";
+import { SpeechToText } from "./speech-to-text";
 
-export const ChatRoom = ({ messagesLoading, setMessagesLoading, selectedChatroom, setSelectedChatroom, showProfileInfo, setShowProfileInfo, messages, setMessages }) => {
+export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading, setMessagesLoading, selectedChatroom, showProfileInfo, setShowProfileInfo, messages, setMessages }) => {
   const [editActive, setEditActive] = useState(false);
   const [replyActive, setReplyActive] = useState(false);
   const [editMessageRef, setEditMessageRef] = useState(null);
@@ -30,7 +34,127 @@ export const ChatRoom = ({ messagesLoading, setMessagesLoading, selectedChatroom
   const scrollAreaRef = useRef(null);
   const inputRef = useRef(null);
   const messageRefs = useRef({});
+  const fileInputRef = useRef(null);
   const userId = "123";
+
+  const unSupportedFileTypes = [".ade", ".adp", ".bat", ".chm", ".cmd", ".com", ".cpl", ".exe", ".hta", ".ins", ".isp", ".jar", ".jse", ".lib", ".lnk", ".mde", ".msc", ".msp", ".mst", ".pif", ".scr", ".sct", ".shb", ".skp", ".sys", ".vb", ".vbe", ".vbs", ".vxd", ".wsc", ".wsf", ".wsh"];
+
+  const handleFileSelect = (e) => {
+    console.log("In handleFileSelect", e.target.files);
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files).map((file) => {
+        if (file.size > 1000000000) {
+          return {
+            file,
+            progress: 0,
+            error: "File size exceeds 1GB limit",
+            id: Math.random().toString(36).substring(7),
+          };
+        } else if (unSupportedFileTypes.includes(file.name.slice(-4).toLowerCase())) {
+          return {
+            file,
+            progress: 0,
+            error: "This file is not allowed to send due to security reasons.",
+            id: Math.random().toString(36).substring(7),
+          };
+        } else {
+          return {
+            file,
+            progress: 0,
+            id: Math.random().toString(36).substring(7),
+          };
+        }
+      });
+      setFiles((prev) => [...prev, ...newFiles]);
+      handleFileUpload(newFiles[0]);
+    }
+  };
+
+  const handleFileUpload = async (file) => {
+    // const file = event.target.files[0];
+    console.log("In handleFileUpload", file);
+    if (!file) return;
+
+    try {
+      // Fetch presigned URL from backend
+      const response = await axios.get(`http://localhost:8089/get-upload-url?fileName=${file.file.name}&fileType=${file.file.type}&chatroomId=5678&is=true`);
+
+      console.log("API response", response.data);
+      // Create a FormData object to hold the file and fields
+      const formData = new FormData();
+      // Object.entries(fields).forEach(([key, value]) => {
+      //   formData.append(key, value);
+      // });
+      formData.append("file", file.file);
+
+      // Upload the file to S3
+      const upload = new XMLHttpRequest();
+      upload.open("PUT", response.data, true);
+      upload.setRequestHeader("Content-Type", file.file.type);
+
+      upload.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const progress = ((event.loaded / event.total) * 100).toFixed(2);
+          setFiles((prev) =>
+            prev.map((f) => {
+              if (f.id === file.id) {
+                return { ...f, progress };
+              }
+              return f;
+            })
+          );
+          console.log(`File upload progress: ${progress}%`);
+        }
+      };
+
+      upload.onload = () => {
+        if (upload.status === 200) {
+          console.log("File uploaded successfully");
+        } else {
+          setFiles((prev) =>
+            prev.map((f) => {
+              if (f.id === file.id) {
+                return { ...f, error: "File upload failed" };
+              }
+              return f;
+            })
+          );
+          console.error("File upload failed");
+        }
+      };
+
+      upload.onerror = () => {
+        setFiles((prev) =>
+          prev.map((f) => {
+            if (f.id === file.id) {
+              return { ...f, error: "File upload failed" };
+            }
+            return f;
+          })
+        );
+        console.error("File upload error");
+      };
+
+      upload.send(formData);
+    } catch (error) {
+      setFiles((prev) =>
+        prev.map((f) => {
+          if (f.id === file.id) {
+            return { ...f, error: "File upload failed" };
+          }
+          return f;
+        })
+      );
+      console.error("Error uploading file:", error);
+    }
+  };
+
+  const removeFile = async (id) => {
+    const fileIndex = files.findIndex((f) => f.id === id);
+    const response = await axios.get(`http://localhost:8089/remove-cancelled-upload?fileName=${files[fileIndex].file.name}&fileType=${files[fileIndex].file.type}&chatroomId=${selectedChatroom.id}`);
+    console.log("Response of removal API", response.data)
+    setFiles((prev) => prev.filter((f) => f.id !== id));
+  };
 
   const isRecentMessage = ({ createdAtSeconds }) => {
     const FIFTEEN_MINUTES_IN_SECONDS = 15 * 60;
@@ -87,7 +211,6 @@ export const ChatRoom = ({ messagesLoading, setMessagesLoading, selectedChatroom
   };
 
   const scrollToBottom = (behavior = "smooth") => {
-    console.log("Scrolling to bottom", scrollAreaRef?.current);
     scrollAreaRef?.current?.scrollIntoView({ behavior, block: "end" });
   };
 
@@ -121,6 +244,10 @@ export const ChatRoom = ({ messagesLoading, setMessagesLoading, selectedChatroom
     }
   };
 
+  const handleTranscript = (transcript) => {
+    setInputMessage((prev) => prev + " " + transcript);
+  };
+
   useEffect(() => {
     handleMessageSearch();
   }, [messageSearchInput]);
@@ -143,7 +270,6 @@ export const ChatRoom = ({ messagesLoading, setMessagesLoading, selectedChatroom
   }, [selectedChatroom]);
 
   useEffect(() => {
-    scrollToBottom("instant");
     markMessagesAsRead({ selectedChatroom, currentUserId: userId });
   }, [messages]);
 
@@ -179,17 +305,7 @@ export const ChatRoom = ({ messagesLoading, setMessagesLoading, selectedChatroom
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="flex lg:hidden mr-4"
-                    onClick={() => {
-                      setMessages([]);
-                      setMessagesLoading(true);
-                      setShowProfileInfo(false);
-                      setSelectedChatroom(null);
-                    }}
-                  >
+                  <Button variant="outline" size="icon" className="flex lg:hidden mr-4" onClick={handleChatroomClose}>
                     <ArrowLeft className="text-[#00203f]" />
                   </Button>
                 </TooltipTrigger>
@@ -308,7 +424,7 @@ export const ChatRoom = ({ messagesLoading, setMessagesLoading, selectedChatroom
       <ContextMenu>
         <ContextMenuTrigger className="flex-1">
           <div className="flex-grow overflow-hidden h-full relative">
-            <div id="message-scroll-area" className="absolute inset-0 overflow-y-auto px-4 space-y-2" ref={scrollAreaRef}>
+            <div id="message-scroll-area" className="absolute inset-0 overflow-y-auto px-4 py-2 space-y-2" ref={scrollAreaRef}>
               <Separator text="Chat initiated" className="px-2" />
               {messagesLoading ? (
                 <React.Fragment>
@@ -430,16 +546,23 @@ export const ChatRoom = ({ messagesLoading, setMessagesLoading, selectedChatroom
                 ))
               )}
             </div>
-              {true && (
-                <Button variant="outline" size="icon" className="[&_svg]:size-5 absolute bottom-5 left-8" onClick={() => {scrollToBottom("smooth")}}>
-                  <ArrowDown />
-                  <span className="sr-only">Scroll to bottom</span>
-                </Button>
-              )}
+            {false && (
+              <Button
+                variant="outline"
+                size="icon"
+                className="[&_svg]:size-5 absolute bottom-5 left-8"
+                onClick={() => {
+                  scrollToBottom("smooth");
+                }}
+              >
+                <ArrowDown />
+                <span className="sr-only">Scroll to bottom</span>
+              </Button>
+            )}
           </div>
         </ContextMenuTrigger>
         <ContextMenuContent>
-          <ContextMenuItem className="gap-2" onClick={() => setSelectedChatroom(null)}>
+          <ContextMenuItem className="gap-2" onClick={handleChatroomClose}>
             <X size={18} />
             <div>Close Chat</div>
           </ContextMenuItem>
@@ -447,31 +570,33 @@ export const ChatRoom = ({ messagesLoading, setMessagesLoading, selectedChatroom
       </ContextMenu>
 
       {/* Input and Other actions */}
-      <div className="bg-background">
+      <div className="bg-background border-t">
+        {files.length > 0 && (
+          <ScrollArea className="w-full whitespace-nowrap rounded-md">
+            <div className="flex w-max space-x-4 p-4">
+              {files.map((fileUpload) => (
+                <FilePreview key={fileUpload.id} file={fileUpload.file} error={fileUpload.error} progress={fileUpload.progress} onRemove={() => removeFile(fileUpload.id)} />
+              ))}
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
+        )}
         <CardFooter id="room-footer" className="p-2 space-x-1 border-none">
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <Button type="button" variant="ghost" size="icon" className="[&_svg]:size-5">
-                <PlusCircle className="text-[#00203f]" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent side="top">
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Files</DropdownMenuItem>
-              <DropdownMenuItem>Share</DropdownMenuItem>
-              <DropdownMenuItem>Delete</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileSelect} />
+          <Button variant="ghost" size="icon" className="rounded-full [&_svg]:size-5" onClick={() => fileInputRef.current?.click()}>
+            <Paperclip />
+          </Button>
           <Popover>
             <PopoverTrigger>
-              <Button type="button" variant="ghost" size="icon" className="[&_svg]:size-5">
-                <Smile className="text-[#00203f]" />
+              <Button variant="ghost" size="icon" className="rounded-full [&_svg]:size-5">
+                <Smile />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="border-none shadow-none p-0">
               <EmojiPicker emojiStyle="native" className="sm:w-96 w-72" onEmojiClick={(e) => setInputMessage((prev) => prev + e.emoji)} />
             </PopoverContent>
           </Popover>
+          <SpeechToText onTranscript={handleTranscript} />
           <form
             className="flex w-full items-center space-x-1"
             onKeyDown={(e) => {
@@ -490,9 +615,9 @@ export const ChatRoom = ({ messagesLoading, setMessagesLoading, selectedChatroom
                 } else if (replyActive) {
                   setReplyActive(false);
                   setReplyMessageRef(null);
-                  sendMessage({ chatroomId: selectedChatroom.id, fromId: userId, message: inputMessage.trim(), repliedTo: { message: replyMessageRef.message, id: replyMessageRef.id, fromId: replyMessageRef.fromId } });
+                  sendMessage({ chatroom: selectedChatroom, fromId: userId, message: inputMessage.trim(), repliedTo: { message: replyMessageRef.message, id: replyMessageRef.id, fromId: replyMessageRef.fromId } });
                 } else {
-                  sendMessage({ chatroomId: selectedChatroom.id, fromId: userId, message: inputMessage.trim() });
+                  sendMessage({ chatroom: selectedChatroom, fromId: userId, message: inputMessage.trim() });
                 }
                 setInputMessage("");
               }
@@ -506,13 +631,13 @@ export const ChatRoom = ({ messagesLoading, setMessagesLoading, selectedChatroom
               if (editActive) {
                 setEditActive(false);
                 setEditMessageRef(null);
-                editMessage({ chatroomId: selectedChatroom.id, messageId: editMessageRef.id, newContent: inputMessage.trim(), fromId: userId });
+                editMessage({ selectedChatroom, messageId: editMessageRef.id, newContent: inputMessage.trim() });
               } else if (replyActive) {
                 setReplyActive(false);
                 setReplyMessageRef(null);
-                sendMessage({ chatroomId: selectedChatroom.id, fromId: userId, message: inputMessage.trim(), repliedTo: { message: replyMessageRef.message, id: replyMessageRef.id, fromId: replyMessageRef.fromId } });
+                sendMessage({ chatroom: selectedChatroom, fromId: userId, message: inputMessage.trim(), repliedTo: { message: replyMessageRef.message, id: replyMessageRef.id, fromId: replyMessageRef.fromId } });
               } else {
-                sendMessage({ chatroomId: selectedChatroom.id, fromId: userId, message: inputMessage.trim() });
+                sendMessage({ chatroom: selectedChatroom, fromId: userId, message: inputMessage.trim() });
               }
               setInputMessage("");
             }}
@@ -569,7 +694,7 @@ export const ChatRoom = ({ messagesLoading, setMessagesLoading, selectedChatroom
                   </Button>
                 </div>
               )}
-              <Textarea rows={1} maxLength={10000} ref={inputRef} className={`min-h-10 max-h-28 resize-none py-1 outline-none flex-grow overflow-hidden p-2 rounded-m ${(editActive || replyActive) && "rounded-t-none border-l-4 border-l-blue-300"}`} id="message" placeholder="Type your message..." value={inputMessage} onChange={(e) => setInputMessage(e.target.value)} autoComplete="off"/>
+              <Textarea rows={1} maxLength={10000} ref={inputRef} className={`min-h-10 max-h-28 resize-none py-1 outline-none flex-grow overflow-hidden p-2 rounded-m ${(editActive || replyActive) && "rounded-t-none border-l-4 border-l-blue-300"}`} id="message" placeholder="Type your message..." value={inputMessage} onChange={(e) => setInputMessage(e.target.value)} autoComplete="off" />
             </div>
             <Button type="submit" variant="ghost" disabled={inputMessage.trim().length < 1} size="icon" className="[&_svg]:size-5">
               <Send className="text-[#00203f]" />

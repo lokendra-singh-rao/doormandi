@@ -154,21 +154,21 @@
 }
 
 /* Modern scrollbar styles */
-.modern-scrollbar {
+#message-scroll-area {
   scrollbar-width: thin;
-  scrollbar-color: rgba(155, 155, 155, 0.5) transparent;
+  scrollbar-color: rgba(155, 155, 155, 0.4) transparent;
 }
 
-.modern-scrollbar::-webkit-scrollbar {
+#message-scroll-area::-webkit-scrollbar {
   width: 6px;
 }
 
-.modern-scrollbar::-webkit-scrollbar-track {
+#message-scroll-area::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.modern-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(155, 155, 155, 0.5);
-  border-radius: 20px;
+#message-scroll-area::-webkit-scrollbar-thumb {
+  background-color: rgba(155, 155, 155, 0.4);
+  border-radius: 80%;
   border: transparent;
 }

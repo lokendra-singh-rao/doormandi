@@ -22,7 +22,7 @@ const categoryIcons = {
   archived: <Archive size={20} />,
 };
 
-export const ChatList = ({ unreadChatrooms, setUnreadChatrooms, starredChatrooms, setStarredChatrooms, archivedChatrooms, setArchivedChatrooms, setMessages, setProfiles, filteredChatrooms, setFilteredChatrooms, chatrooms, setChatrooms, selectedChatroom, setSelectedChatroom, setShowProfileInfo, setMessagesLoading }) => {
+export const ChatList = ({ setFiles, handleChatroomClose, unreadChatrooms, setUnreadChatrooms, starredChatrooms, setStarredChatrooms, archivedChatrooms, setArchivedChatrooms, setMessages, setProfiles, filteredChatrooms, setFilteredChatrooms, chatrooms, setChatrooms, selectedChatroom, setSelectedChatroom, setShowProfileInfo, setMessagesLoading }) => {
   const userId = "123";
   const [searchInput, setSearchInput] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -101,6 +101,7 @@ export const ChatList = ({ unreadChatrooms, setUnreadChatrooms, starredChatrooms
   }, [profileChatrooms]);
 
   const fetchClientProfile = async ({ chatroomId, userId }) => {
+    console.log("fetching client profile", userId);
     const res = {
       name: "Client Name",
       memberSince: "January 2022",
@@ -111,8 +112,9 @@ export const ChatList = ({ unreadChatrooms, setUnreadChatrooms, starredChatrooms
     };
     setProfiles((prev) => ({ ...prev, [chatroomId]: res }));
   };
-
+  
   const fetchFreelancerProfile = async ({ chatroomId, userId }) => {
+    console.log("fetching freelancer profile", userId);
     const res = {
       name: "Freelancer Name",
       memberSince: "September 2024",
@@ -204,10 +206,12 @@ export const ChatList = ({ unreadChatrooms, setUnreadChatrooms, starredChatrooms
                       <ContextMenuTrigger>
                         <div
                           onClick={() => {
+                            if(chatroom.id === selectedChatroom?.id) return;
                             setMessages([]);
                             setMessagesLoading(true);
                             setShowProfileInfo(false);
                             setSelectedChatroom(chatroom);
+                            setFiles([]);
                           }}
                           className={cn("group relative flex min-w-0 cursor-pointer items-center gap-2 py-3 px-2 hover:bg-muted/50", chatroom.id === selectedChatroom?.id && "bg-[#e4edfd] hover:bg-[#e4edfd]")}
                         >
@@ -234,7 +238,7 @@ export const ChatList = ({ unreadChatrooms, setUnreadChatrooms, starredChatrooms
                               <div className="flex items-center gap-2">
                               {chatroom?.starredBy?.includes(userId) && <HeartIcon size={18} fill="#f00d" color="#f00d"/>}
                                 {chatroom.archivedBy?.includes(userId) && <Badge variant="secondary">Archived</Badge>}
-                                {<Button className="h-4 w-4 bg-green-500 rounded-full p-2.5">4</Button>}</div>
+                                {chatroom.unreadCount[userId] > 0 && <Button className="h-3 w-3 bg-green-500 rounded-full p-2.5 text-[12px]">{chatroom.unreadCount[userId]}</Button>}</div>
                             </div>
                           </div>
                         </div>
@@ -264,7 +268,7 @@ export const ChatList = ({ unreadChatrooms, setUnreadChatrooms, starredChatrooms
                           </ContextMenuItem>
                         )}
                         {selectedChatroom?.id === chatroom?.id && (
-                          <ContextMenuItem className="gap-2" onClick={() => setSelectedChatroom(null)}>
+                          <ContextMenuItem className="gap-2" onClick={handleChatroomClose}>
                             <X size={18} />
                             <div>Close Chat</div>
                           </ContextMenuItem>

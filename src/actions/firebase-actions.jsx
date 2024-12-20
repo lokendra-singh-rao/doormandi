@@ -16,7 +16,7 @@ export const fetchChatrooms = async ({ userId, setChatrooms, setArchivedChatroom
       const nonArchivedChatrooms = fetchedChatrooms.filter((chatroom) => !chatroom.archivedBy.includes(userId));
       setChatrooms(nonArchivedChatrooms);
 
-      const unreadChatrooms = nonArchivedChatrooms.filter((chatroom) => chatroom.lastMessage.senderId !== userId && chatroom.lastMessage.readStatus === false);
+      const unreadChatrooms = nonArchivedChatrooms.filter((chatroom) => chatroom.unreadCount[userId] > 0);
       setUnreadChatrooms(unreadChatrooms);
 
       const starredChatrooms = fetchedChatrooms.filter((chatroom) => chatroom.starredBy.includes(userId));
@@ -56,18 +56,22 @@ export const fetchMessages = async ({ chatroomId, setMessages }) => {
 export const createChatroom = async () => {
   console.log("Creating chatroom");
   const chatroom = {
-    members: ["123", "999"],
+    members: ["123", "369"],
     starredBy: [],
     archivedBy: [],
     createdAt: serverTimestamp(),
     fromId: "123",
     toId: "369",
     lastMessage: {
-      text: "Hello, this is first message from user 999",
+      text: "Chat initiated",
       sentAt: serverTimestamp(),
       senderId: "123",
       readStatus: false,
       isDeleted: false,
+    },
+    unreadCount: {
+      123: 0,
+      369: 0,
     },
     fromName: "User 123",
     toName: "User 369",
@@ -81,8 +85,8 @@ export const createChatroom = async () => {
   }
 };
 
-export const sendMessage = async ({ chatroomId, fromId, message, mediaUrl = "", mediaType = "", mediaThumbnail = "", starredBy = [], repliedTo = { message: "", id: "", fromId: "" }, readInfo = { status: false, date: null }, createdAt = serverTimestamp(), isEdited = false, editedAt = null, isDeleted = false, deletedAt = null }) => {
-  if (!chatroomId) return;
+export const sendMessage = async ({ chatroom, fromId, message, mediaUrl = "", mediaType = "", mediaThumbnail = "", starredBy = [], repliedTo = { message: "", id: "", fromId: "" }, readInfo = { status: false, date: null }, createdAt = serverTimestamp(), isEdited = false, editedAt = null, isDeleted = false, deletedAt = null }) => {
+  if (!chatroom) return;
 
   const newMessage = {
     fromId,
@@ -101,10 +105,10 @@ export const sendMessage = async ({ chatroomId, fromId, message, mediaUrl = "", 
   };
 
   try {
-    const messageRef = await addDoc(collection(db, "Chatrooms", chatroomId, "Messages"), newMessage);
+    const messageRef = await addDoc(collection(db, "Chatrooms", chatroom.id, "Messages"), newMessage);
     console.log("Message sent with ID: ", messageRef.id);
 
-    const chatroomRef = doc(db, "Chatrooms", chatroomId);
+    const chatroomRef = doc(db, "Chatrooms", chatroom.id);
     const lastMessage = {
       text: message,
       sentAt: createdAt,
@@ -114,8 +118,16 @@ export const sendMessage = async ({ chatroomId, fromId, message, mediaUrl = "", 
       isDeleted: false,
     };
 
+    const toIdForUnreadCount = chatroom.fromId == fromId ? chatroom.toId : chatroom.fromId;
+
+    const unreadCount = {
+      [fromId]: 0,
+      [toIdForUnreadCount]: chatroom.unreadCount[toIdForUnreadCount] + 1,
+    };
+
     await updateDoc(chatroomRef, {
       lastMessage,
+      unreadCount,
     });
   } catch (e) {
     console.error("Error sending message: ", e);
@@ -210,26 +222,49 @@ export const markMessagesAsRead = async ({ selectedChatroom, currentUserId }) =>
 
     const querySnapshot = await getDocs(unreadMessagesQuery);
 
-    if (querySnapshot?.empty) {
-      console.log("No unread messages found.");
-      return;
+    if (!querySnapshot?.empty) {
+      const batch = writeBatch(db);
+
+      querySnapshot.forEach((messageDoc) => {
+        const messageRef = doc(messagesRef, messageDoc.id);
+        batch.update(messageRef, {
+          readInfo: {
+            status: true,
+            date: serverTimestamp(),
+          },
+        });
+      });
+
+      batch.commit();
+
+      console.log("Messages marked as read successfully.");
     }
 
-    const batch = writeBatch(db);
+    const chatroomRef = doc(db, "Chatrooms", selectedChatroom.id);
 
-    querySnapshot.forEach((messageDoc) => {
-      const messageRef = doc(messagesRef, messageDoc.id);
-      batch.update(messageRef, {
-        readInfo: {
-          status: true,
-          date: serverTimestamp(),
-        },
+    let lastMessage = selectedChatroom?.lastMessage;
+    console.log("Updating last message: ", lastMessage);
+
+    if (selectedChatroom.lastMessage && selectedChatroom.lastMessage.senderId !== currentUserId && selectedChatroom.lastMessage.readStatus === false) {
+      lastMessage = {
+        ...selectedChatroom.lastMessage,
+        readStatus: true,
+      };
+      updateDoc(chatroomRef, {
+        lastMessage,
       });
+    }
+
+    const otherUserId = selectedChatroom.fromId == currentUserId ? selectedChatroom.toId : selectedChatroom.fromId;
+
+    const unreadCount = {
+      [currentUserId]: 0,
+      [otherUserId]: selectedChatroom.unreadCount[otherUserId],
+    };
+
+    updateDoc(chatroomRef, {
+      unreadCount,
     });
-
-    batch.commit();
-
-    console.log("Messages marked as read successfully.");
   } catch (error) {
     console.error("Error marking messages as read:", error);
   }
@@ -263,26 +298,6 @@ export const markChatroomAsUnarchived = async ({ selectedChatroom, userId }) => 
   }
 };
 
-export const getArchivedChatrooms = async ({ userId, setArchivedChatrooms }) => {
-  const q = query(collection(db, "Chatrooms"), where("archivedBy", "array-contains", userId), orderBy("lastMessage.sentAt", "desc"));
-
-  onSnapshot(
-    q,
-    (snapshot) => {
-      const fetchedChatrooms = snapshot.docs.map((doc) => {
-        return {
-          id: doc.id,
-          ...doc.data(),
-        };
-      });
-      setArchivedChatrooms(fetchedChatrooms);
-    },
-    (error) => {
-      console.error("Error fetching archived chatrooms: ", error);
-    }
-  );
-};
-
 export const markChatroomAsStarred = async ({ selectedChatroom, userId }) => {
   if (!selectedChatroom) return;
 
@@ -309,24 +324,4 @@ export const markChatroomAsUnstarred = async ({ selectedChatroom, userId }) => {
   } catch (e) {
     console.error("Error unstarring chatroom: ", e);
   }
-};
-
-export const getStarredChatrooms = async ({ userId, setStarredChatrooms }) => {
-  const q = query(collection(db, "Chatrooms"), where("starredBy", "array-contains", userId), orderBy("lastMessage.sentAt", "desc"));
-
-  onSnapshot(
-    q,
-    (snapshot) => {
-      const fetchedChatrooms = snapshot.docs.map((doc) => {
-        return {
-          id: doc.id,
-          ...doc.data(),
-        };
-      });
-      setStarredChatrooms(fetchedChatrooms);
-    },
-    (error) => {
-      console.error("Error fetching starred chatrooms: ", error);
-    }
-  );
 };
