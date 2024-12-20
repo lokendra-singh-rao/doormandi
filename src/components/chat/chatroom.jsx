@@ -30,6 +30,7 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
   const [messageSearchInput, setMessageSearchInput] = useState("");
   const [filteredMessages, setFilteredMessages] = useState([]);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+  const [isScrolledToBottom, setIsScrolledToBottom] = useState(true);
 
   const scrollAreaRef = useRef(null);
   const inputRef = useRef(null);
@@ -40,7 +41,6 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
   const unSupportedFileTypes = [".ade", ".adp", ".bat", ".chm", ".cmd", ".com", ".cpl", ".exe", ".hta", ".ins", ".isp", ".jar", ".jse", ".lib", ".lnk", ".mde", ".msc", ".msp", ".mst", ".pif", ".scr", ".sct", ".shb", ".skp", ".sys", ".vb", ".vbe", ".vbs", ".vxd", ".wsc", ".wsf", ".wsh"];
 
   const handleFileSelect = (e) => {
-    console.log("In handleFileSelect", e.target.files);
     if (e.target.files) {
       const newFiles = Array.from(e.target.files).map((file) => {
         if (file.size > 1000000000) {
@@ -72,14 +72,12 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
 
   const handleFileUpload = async (file) => {
     // const file = event.target.files[0];
-    console.log("In handleFileUpload", file);
     if (!file) return;
 
     try {
       // Fetch presigned URL from backend
       const response = await axios.get(`http://localhost:8089/get-upload-url?fileName=${file.file.name}&fileType=${file.file.type}&chatroomId=5678&is=true`);
 
-      console.log("API response", response.data);
       // Create a FormData object to hold the file and fields
       const formData = new FormData();
       // Object.entries(fields).forEach(([key, value]) => {
@@ -103,7 +101,6 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
               return f;
             })
           );
-          console.log(`File upload progress: ${progress}%`);
         }
       };
 
@@ -168,21 +165,29 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
     setEditMessageRef(message);
   };
 
-  const handleMessageSearch = () => {
-    if (messageSearchInput.trim().length <= 0) {
+  const handleMessageSearch = (e) => {
+    if (e?.target?.value.trim().length <= 0) {
       return;
     }
-    setFilteredMessages(
-      messages.filter((message) => {
-        if (message.message.toLowerCase().includes(messageSearchInput.toLowerCase())) return message?.id;
-      })
-    );
+    console.log("Filtering messages for", e.target.value)
 
-    const currentPointerAt = filteredMessages.length - 1;
+    let filteredMessagesList = messages.filter((message) => {
+      if (message.message.toLowerCase().includes(e.target.value.toLowerCase())) return message?.id;
+    })
+
+    if(filteredMessagesList.length <= 0) {
+      console.log("No messages found")
+      return;
+    }
+
+    setFilteredMessages(filteredMessagesList);
+
+    const currentPointerAt = filteredMessagesList?.length - 1;
 
     setCurrentMessageIndex(currentPointerAt);
 
-    scrollToMessage({ messageId: filteredMessages[currentPointerAt]?.id, block: "end" });
+    scrollToMessage({ messageId: filteredMessagesList[currentPointerAt]?.id, block: "end" });
+    console.log("search end")
   };
 
   const handleMessageNavigation = (direction) => {
@@ -211,7 +216,10 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
   };
 
   const scrollToBottom = (behavior = "smooth") => {
-    scrollAreaRef?.current?.scrollIntoView({ behavior, block: "end" });
+    scrollAreaRef.current.scrollTo({
+      top: scrollAreaRef.current.scrollHeight,
+      behavior
+    });
   };
 
   const handleCopyToClipboard = ({ content }) => {
@@ -243,14 +251,35 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
       }, 900);
     }
   };
-
+  
   const handleTranscript = (transcript) => {
     setInputMessage((prev) => prev + " " + transcript);
   };
+  
+  const handleScroll = () => {
+    if (scrollAreaRef.current) {
+      if (scrollAreaRef.current.scrollHeight - scrollAreaRef.current.scrollTop - scrollAreaRef.current.clientHeight > 300) {
+        setIsScrolledToBottom(false);
+      } else {
+        setIsScrolledToBottom(true);
+      }
+    }
+  };
 
   useEffect(() => {
-    handleMessageSearch();
-  }, [messageSearchInput]);
+    if(!selectedChatroom) return;
+
+    const container = scrollAreaRef.current;
+    if (!container) {
+      return;
+    }
+
+    container.addEventListener("scroll", handleScroll);
+
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+    };
+  }, [selectedChatroom]);
 
   useEffect(() => {
     if (editActive) {
@@ -305,7 +334,7 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
-                  <Button variant="outline" size="icon" className="flex lg:hidden mr-4" onClick={handleChatroomClose}>
+                  <Button variant="ghost" size="icon" className="flex lg:hidden mr-2 rounded-full [&_svg]:size-5" onClick={handleChatroomClose}>
                     <ArrowLeft className="text-[#00203f]" />
                   </Button>
                 </TooltipTrigger>
@@ -325,7 +354,7 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
                   </Button>
                   <div className="z-50 absolute md:-left-[450%] md:top-[140%] w-[380px] bg-white rounded-lg md:block hidden">
                     <div className={`relative ${showSearchBar ? "block" : "hidden"}`}>
-                      <Input placeholder="Search within chat" className="w-full h-11" value={messageSearchInput} onChange={(e) => setMessageSearchInput(e.target.value)} />
+                      <Input placeholder="Search within chat" className="w-full h-11" value={messageSearchInput} onChange={(e) => {setMessageSearchInput(e.target.value); handleMessageSearch(e)}} />
                       <div className="flex gap-2 items-center absolute right-2 top-1/2 transform -translate-y-1/2">
                         <Button disabled={currentMessageIndex === 0} variant={"ghost"} size={"icon"} className="[&_svg]:size-5 rounded-full" onClick={() => handleMessageNavigation("up")}>
                           <ChevronUp className="text-[#00203f]" />
@@ -395,7 +424,7 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
         {showSearchBar && (
           <div className="z-50 md:hidden flex w-full bg-white">
             <div className={`relative flex-1`}>
-              <Input placeholder="Search within chat" className="w-full h-11" value={messageSearchInput} onChange={(e) => setMessageSearchInput(e.target.value)} />
+              <Input placeholder="Search within chat" className="w-full h-11" value={messageSearchInput} onChange={(e) => {setMessageSearchInput(e.target.value); handleMessageSearch(e)}} />
               <div className="flex gap-2 items-center absolute right-2 top-1/2 transform -translate-y-1/2">
                 <Button disabled={currentMessageIndex === 0} variant={"ghost"} size={"icon"} className="[&_svg]:size-5 rounded-full" onClick={() => handleMessageNavigation("up")}>
                   <ChevronUp className="text-[#00203f]" />
@@ -546,13 +575,13 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
                 ))
               )}
             </div>
-            {false && (
+            {!isScrolledToBottom && (
               <Button
                 variant="outline"
                 size="icon"
-                className="[&_svg]:size-5 absolute bottom-5 left-8"
+                className="[&_svg]:size-5 absolute bottom-5 left-8 rounded-full"
                 onClick={() => {
-                  scrollToBottom("smooth");
+                  scrollToBottom();
                 }}
               >
                 <ArrowDown />
@@ -599,7 +628,7 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
           <SpeechToText onTranscript={handleTranscript} />
           <form
             className="flex w-full items-center space-x-1"
-            onKeyDown={(e) => {
+            onKeyDown={async (e) => {
               if (e.key === "Enter" && e.shiftKey) {
                 return;
               } else if (e.key === "Enter") {
@@ -608,6 +637,7 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
                   return;
                 }
                 scrollToBottom("smooth");
+                setInputMessage("");
                 if (editActive) {
                   setEditActive(false);
                   setEditMessageRef(null);
@@ -619,7 +649,6 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
                 } else {
                   sendMessage({ chatroom: selectedChatroom, fromId: userId, message: inputMessage.trim() });
                 }
-                setInputMessage("");
               }
             }}
             onSubmit={(e) => {

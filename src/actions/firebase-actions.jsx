@@ -109,6 +109,7 @@ export const sendMessage = async ({ chatroom, fromId, message, mediaUrl = "", me
     console.log("Message sent with ID: ", messageRef.id);
 
     const chatroomRef = doc(db, "Chatrooms", chatroom.id);
+    
     const lastMessage = {
       text: message,
       sentAt: createdAt,
@@ -242,11 +243,8 @@ export const markMessagesAsRead = async ({ selectedChatroom, currentUserId }) =>
 
     const chatroomRef = doc(db, "Chatrooms", selectedChatroom.id);
 
-    let lastMessage = selectedChatroom?.lastMessage;
-    console.log("Updating last message: ", lastMessage);
-
     if (selectedChatroom.lastMessage && selectedChatroom.lastMessage.senderId !== currentUserId && selectedChatroom.lastMessage.readStatus === false) {
-      lastMessage = {
+      const lastMessage = {
         ...selectedChatroom.lastMessage,
         readStatus: true,
       };
@@ -255,16 +253,19 @@ export const markMessagesAsRead = async ({ selectedChatroom, currentUserId }) =>
       });
     }
 
+    if(selectedChatroom.unreadCount[currentUserId] === 0) return;
+    
     const otherUserId = selectedChatroom.fromId == currentUserId ? selectedChatroom.toId : selectedChatroom.fromId;
 
     const unreadCount = {
       [currentUserId]: 0,
       [otherUserId]: selectedChatroom.unreadCount[otherUserId],
     };
-
+    
     updateDoc(chatroomRef, {
       unreadCount,
     });
+
   } catch (error) {
     console.error("Error marking messages as read:", error);
   }
