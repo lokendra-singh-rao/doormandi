@@ -1,5 +1,5 @@
 import { Progress } from "@/components/ui/progress";
-import { FileQuestion, FileText, FileWarning, ImageIcon, Music, VideoIcon, X } from "lucide-react";
+import { Check, FileQuestion, FileText, FileWarning, ImageIcon, Music, VideoIcon, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
@@ -59,16 +59,16 @@ export function FilePreview({ file, error, progress, onRemove }) {
   // };
 
   useEffect(() => {
-    if (file.type.startsWith("image/")) {
+    if (file?.type?.startsWith("image/")) {
       const url = URL.createObjectURL(file);
       setThumbnail(url);
       return () => URL.revokeObjectURL(url);
-    } else if (file.type.startsWith("video/")) {
+    } else if (file?.type?.startsWith("video/")) {
       generateVideoThumbnail(file)
         .then(setThumbnail)
         .catch(() => setThumbnail(null));
     }
-  }, [file.file]);
+  }, [file?.file]);
 
   const generateVideoThumbnail = (file) => {
     return new Promise((resolve, reject) => {
@@ -147,18 +147,24 @@ export function FilePreview({ file, error, progress, onRemove }) {
     }
   };
 
-  const getFileSize = () => {
-    if (file.size < 1024) {
-      return `${file.size} B`;
-    } else if (file.size < 1024 * 1024) {
-      return `${(file.size / 1024).toFixed(2)} KB`;
+  const getFileSize = (size) => {
+    if (size < 1024) {
+      return `${size} B`;
+    } else if (size < 1024 * 1024) {
+      return `${(size / 1024).toFixed(2)} KB`;
     } else {
-      return `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+      return `${(size / (1024 * 1024)).toFixed(2)} MB`;
     }
   };
 
+  const getFileSizeWithUploadProgress = (fileSize, progress) => {
+    if(progress === 100) return getFileSize(fileSize);
+
+    return `${getFileSize((fileSize * progress) / 100)}/${getFileSize(fileSize)}`;
+  }
+
   return (
-    <div className="relative flex items-center gap-2 w-72 rounded-lg border p-3">
+    <div className="relative flex items-center gap-2 w-64 rounded-lg border p-3">
       <Button variant="secondary" size="icon" onClick={onRemove} className="absolute h-6 w-6 -right-2 [&_svg]:size-4 -top-2 p-0 rounded-full">
         <X />
       </Button>
@@ -185,8 +191,8 @@ export function FilePreview({ file, error, progress, onRemove }) {
             <>
               <Progress value={progress} className="h-2" />
               <div className="flex justify-between">
-                <div className="text-[14px] text-gray-600 font-semibold">{getFileSize()}</div>
-                <div className="text-[14px] text-gray-600 font-semibold">{progress}%</div>
+                <div className="text-[12px] text-gray-600 font-semibold">{getFileSizeWithUploadProgress(file.size, progress)}</div>
+                {progress == 100 ? <div className="text-[12px] text-green-600 font-semibold">Uploaded!</div> : <div className="text-[12px] text-gray-600 font-semibold">{progress}%</div>}
               </div>
             </>
           )}

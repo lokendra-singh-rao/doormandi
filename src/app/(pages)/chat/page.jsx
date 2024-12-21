@@ -30,7 +30,7 @@ export default function Home() {
   };
 
   return (
-    <main className="h-[86.5vh] 2xl:px-32">
+    <main className="h-[100vh] 2xl:px-32">
       <ResizablePanelGroup direction="horizontal" className="rounded-lg border-none">
         <ResizablePanel defaultSize={showProfileInfo ? 25 : 25} maxSize={showProfileInfo ? 25 : 30} minSize={showProfileInfo ? 25 : 25} className={`${selectedChatroom ? "hidden lg:block" : "block"}`}>
           <ChatList handleChatroomClose={handleChatroomClose} setIsFirstScroll={setIsFirstScroll} setFiles={setFiles} unreadChatrooms={unreadChatrooms} setUnreadChatrooms={setUnreadChatrooms} starredChatrooms={starredChatrooms} setStarredChatrooms={setStarredChatrooms} archivedChatrooms={archivedChatrooms} setArchivedChatrooms={setArchivedChatrooms} profiles={profiles} setMessagesLoading={setMessagesLoading} setMessages={setMessages} setProfiles={setProfiles} filteredChatrooms={filteredChatrooms} setFilteredChatrooms={setFilteredChatrooms} chatrooms={chatrooms} setChatrooms={setChatrooms} selectedChatroom={selectedChatroom} setSelectedChatroom={setSelectedChatroom} setShowProfileInfo={setShowProfileInfo} />

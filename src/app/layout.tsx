@@ -24,8 +24,8 @@ export default async function RootLayout({
       <body>
         <link rel="icon" href="/favicon.png" sizes="any" />
           <ReduxProvider>
-          <Announcement/>
-          {session ? <Navbar /> : <PublicNavbar />}
+          {/* <Announcement/>
+          {session ? <Navbar /> : <PublicNavbar />} */}
             {children}
             {/* <Footer /> */}
           </ReduxProvider>

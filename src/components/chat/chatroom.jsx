@@ -5,7 +5,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { cn, formatDate } from "@/lib/utils";
 import axios from "axios";
 import EmojiPicker from "emoji-picker-react";
-import { ArrowDown, ArrowLeft, CalendarPlus, CheckCheck, ChevronDown, ChevronUp, Copy, EllipsisVerticalIcon, MessageCircleOff, PanelRightClose, PanelRightOpen, Paperclip, Pencil, PencilIcon, Search, Send, Smile, Star, Trash, Undo, Video, X } from "lucide-react";
+import { AlertCircle, ArrowDown, ArrowLeft, CalendarPlus, CheckCheck, ChevronDown, ChevronUp, Copy, EllipsisVerticalIcon, FileQuestion, FileText, MessageCircleOff, Music, PanelRightClose, PanelRightOpen, Paperclip, Pencil, PencilIcon, Search, Send, Smile, Star, Trash, Undo, Video, VideoIcon, X } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "../ui/context-menu";
@@ -18,6 +18,8 @@ import { Textarea } from "../ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { FilePreview } from "./file-preview";
 import { SpeechToText } from "./speech-to-text";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import MediaThumbnail from "./media-thumbhnail";
 
 export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading, setMessagesLoading, selectedChatroom, showProfileInfo, setShowProfileInfo, messages, setMessages }) => {
   const [editActive, setEditActive] = useState(false);
@@ -31,6 +33,8 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
   const [filteredMessages, setFilteredMessages] = useState([]);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(true);
+  const [filesSize, setFilesSize] = useState(0);
+  const [isSendDisabled, setIsSendDisabled] = useState(false);
 
   const scrollAreaRef = useRef(null);
   const inputRef = useRef(null);
@@ -40,117 +44,201 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
 
   const unSupportedFileTypes = [".ade", ".adp", ".bat", ".chm", ".cmd", ".com", ".cpl", ".exe", ".hta", ".ins", ".isp", ".jar", ".jse", ".lib", ".lnk", ".mde", ".msc", ".msp", ".mst", ".pif", ".scr", ".sct", ".shb", ".skp", ".sys", ".vb", ".vbe", ".vbs", ".vxd", ".wsc", ".wsf", ".wsh"];
 
-  const handleFileSelect = (e) => {
+  const compressImage = async (file, { quality = 1, type = file.type }) => {
+    try {
+      // Get as image data
+      const imageBitmap = await createImageBitmap(file);
+
+      // Draw to canvas
+      const canvas = document.createElement("canvas");
+      canvas.width = imageBitmap.width;
+      canvas.height = imageBitmap.height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(imageBitmap, 0, 0);
+
+      // Turn into Blob
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, type, quality));
+
+      // Turn Blob into File
+      return new File([blob], file.name, {
+        type: blob.type,
+      });
+    } catch (error) {
+      console.error("Error creating image thumbh", error);
+      return null;
+    }
+  };
+
+  const handleFileSelect = async (e) => {
     if (e.target.files) {
-      const newFiles = Array.from(e.target.files).map((file) => {
-        if (file.size > 1000000000) {
-          return {
+      const selectedFiles = Array.from(e.target.files);
+      const newFiles = [];
+
+      for (const file of selectedFiles) {
+        setFilesSize((prev) => prev + file.size);
+
+        if (file.size > 1073741824) {
+          newFiles.push({
             file,
             progress: 0,
             error: "File size exceeds 1GB limit",
             id: Math.random().toString(36).substring(7),
-          };
+          });
         } else if (unSupportedFileTypes.includes(file.name.slice(-4).toLowerCase())) {
-          return {
+          newFiles.push({
             file,
             progress: 0,
-            error: "This file is not allowed to send due to security reasons.",
+            error: "File blocked by Ditansource, due to security reasons.",
             id: Math.random().toString(36).substring(7),
-          };
+          });
         } else {
-          return {
+          let thumbh = null;
+          if (file.type.includes("image")) {
+            thumbh = await compressImage(file, {
+              quality: 0.1,
+              type: "image/webp",
+            });
+          }
+          newFiles.push({
             file,
             progress: 0,
             id: Math.random().toString(36).substring(7),
-          };
+            ...(thumbh ? { thumbh } : {}),
+          });
         }
-      });
+      }
+
       setFiles((prev) => [...prev, ...newFiles]);
-      handleFileUpload(newFiles[0]);
+      handleFileUpload(newFiles);
     }
   };
 
-  const handleFileUpload = async (file) => {
-    // const file = event.target.files[0];
-    if (!file) return;
+  const handleFileUpload = async (files) => {
+    for (const file of files) {
+      if (file.error) {
+        continue;
+      }
 
-    try {
-      // Fetch presigned URL from backend
-      const response = await axios.get(`http://localhost:8089/get-upload-url?fileName=${file.file.name}&fileType=${file.file.type}&chatroomId=5678&is=true`);
+      if (!file) return;
 
-      // Create a FormData object to hold the file and fields
-      const formData = new FormData();
-      // Object.entries(fields).forEach(([key, value]) => {
-      //   formData.append(key, value);
-      // });
-      formData.append("file", file.file);
+      try {
+        const response = await axios.post(`http://localhost:8089/get-upload-url`, {
+          fileName: file.file.name,
+          fileType: file.file.type,
+          fileSize: file.file.size.toString(),
+          chatroomId: selectedChatroom.id,
+        });
 
-      // Upload the file to S3
-      const upload = new XMLHttpRequest();
-      upload.open("PUT", response.data, true);
-      upload.setRequestHeader("Content-Type", file.file.type);
+        const putObject = response.data;
 
-      upload.upload.onprogress = (event) => {
-        if (event.lengthComputable) {
-          const progress = ((event.loaded / event.total) * 100).toFixed(2);
+        const config = {
+          headers: {
+            "Content-Type": file.file.type,
+          },
+
+          onUploadProgress: (progressEvent) => {
+            // Calculate percentage uploaded
+            const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            setFiles((prev) =>
+              prev.map((f) => {
+                if (f.id === file.id) {
+                  return { ...f, progress };
+                }
+                return f;
+              })
+            );
+            console.log(`Upload progress: ${progress}%`);
+          },
+        };
+
+        // Make the PUT request to the S3 pre-signed URL
+        const responsePut = await axios.put(putObject?.presignedUrl, file.file, config);
+
+        if (responsePut.status === 200) {
+          console.log("File uploaded successfully!");
           setFiles((prev) =>
             prev.map((f) => {
               if (f.id === file.id) {
-                return { ...f, progress };
+                return { ...f, key: putObject?.keyname, mediaType: putObject?.contentType };
               }
               return f;
             })
           );
-        }
-      };
-
-      upload.onload = () => {
-        if (upload.status === 200) {
-          console.log("File uploaded successfully");
         } else {
           setFiles((prev) =>
             prev.map((f) => {
               if (f.id === file.id) {
-                return { ...f, error: "File upload failed" };
+                return { ...f, error: "Upload failed!" };
               }
               return f;
             })
           );
-          console.error("File upload failed");
         }
-      };
 
-      upload.onerror = () => {
+        if (file.thumbh) {
+          const thumbhConfig = {
+            headers: {
+              "Content-Type": file.thumbh.type,
+            },
+
+            onUploadProgress: (progressEvent) => {
+              // Calculate thumbhnail percentage uploaded
+              const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+
+              console.log(`Thumbhnai upload progress: ${progress}%`);
+            },
+          };
+
+          const thumbhResponsePut = await axios.put(putObject?.thumbPresignedUrl, file.thumbh, thumbhConfig);
+
+          if (thumbhResponsePut.status === 200) {
+            console.log("File uploaded successfully!");
+            setFiles((prev) =>
+              prev.map((f) => {
+                if (f.id === file.id) {
+                  return { ...f, thumbhKey: putObject?.thumbhKeyname };
+                }
+                return f;
+              })
+            );
+          } else {
+            console.error("Thumbhnail upload failed:", thumbhResponsePut.status, thumbhResponsePut.statusText);
+          }
+        }
+      } catch (error) {
+        console.error("Error uploading file", error);
         setFiles((prev) =>
           prev.map((f) => {
             if (f.id === file.id) {
-              return { ...f, error: "File upload failed" };
+              return { ...f, error: "Upload failed!" };
             }
             return f;
           })
         );
-        console.error("File upload error");
-      };
-
-      upload.send(formData);
-    } catch (error) {
-      setFiles((prev) =>
-        prev.map((f) => {
-          if (f.id === file.id) {
-            return { ...f, error: "File upload failed" };
-          }
-          return f;
-        })
-      );
-      console.error("Error uploading file:", error);
+      }
     }
   };
 
   const removeFile = async (id) => {
     const fileIndex = files.findIndex((f) => f.id === id);
-    const response = await axios.get(`http://localhost:8089/remove-cancelled-upload?fileName=${files[fileIndex].file.name}&fileType=${files[fileIndex].file.type}&chatroomId=${selectedChatroom.id}`);
-    console.log("Response of removal API", response.data)
+    // const response = await axios.get(`http://localhost:8089/remove-cancelled-upload?fileName=${files[fileIndex].file.name}&fileType=${files[fileIndex].file.type}&chatroomId=${selectedChatroom.id}`);
+    // console.log("Response of removal API", response.data);
+
+    setFilesSize((prev) => prev - files[fileIndex].file.size);
     setFiles((prev) => prev.filter((f) => f.id !== id));
+  };
+
+  const handleFileSend = async () => {
+    for (const file of files) {
+      if (file.error || file.progress < 100) {
+        continue;
+      }
+
+      sendMessage({ chatroom: selectedChatroom, fromId: userId, message: file.file.name, isMedia: true, mediaType: file.file.type, mediaKey: file.key, mediaThumbnailKey: file.thumbhKey ? file.thumbhKey : "" });
+    }
+
+    setFiles([]);
+    setFilesSize(0);
   };
 
   const isRecentMessage = ({ createdAtSeconds }) => {
@@ -169,14 +257,13 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
     if (e?.target?.value.trim().length <= 0) {
       return;
     }
-    console.log("Filtering messages for", e.target.value)
 
     let filteredMessagesList = messages.filter((message) => {
-      if (message.message.toLowerCase().includes(e.target.value.toLowerCase())) return message?.id;
-    })
+      if (message.message.toLowerCase().includes(e.target.value.toLowerCase()) && !message.message.idDeleted) return message?.id;
+    });
 
-    if(filteredMessagesList.length <= 0) {
-      console.log("No messages found")
+    if (filteredMessagesList.length <= 0) {
+      console.log("No messages found");
       return;
     }
 
@@ -187,7 +274,6 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
     setCurrentMessageIndex(currentPointerAt);
 
     scrollToMessage({ messageId: filteredMessagesList[currentPointerAt]?.id, block: "end" });
-    console.log("search end")
   };
 
   const handleMessageNavigation = (direction) => {
@@ -218,7 +304,7 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
   const scrollToBottom = (behavior = "smooth") => {
     scrollAreaRef.current.scrollTo({
       top: scrollAreaRef.current.scrollHeight,
-      behavior
+      behavior,
     });
   };
 
@@ -251,11 +337,11 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
       }, 900);
     }
   };
-  
+
   const handleTranscript = (transcript) => {
     setInputMessage((prev) => prev + " " + transcript);
   };
-  
+
   const handleScroll = () => {
     if (scrollAreaRef.current) {
       if (scrollAreaRef.current.scrollHeight - scrollAreaRef.current.scrollTop - scrollAreaRef.current.clientHeight > 300) {
@@ -267,7 +353,7 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
   };
 
   useEffect(() => {
-    if(!selectedChatroom) return;
+    if (!selectedChatroom) return;
 
     const container = scrollAreaRef.current;
     if (!container) {
@@ -334,7 +420,15 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
-                  <Button variant="ghost" size="icon" className="flex lg:hidden mr-2 rounded-full [&_svg]:size-5" onClick={handleChatroomClose}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="flex lg:hidden mr-2 rounded-full [&_svg]:size-5"
+                    onClick={() => {
+                      setFilesSize(0);
+                      handleChatroomClose();
+                    }}
+                  >
                     <ArrowLeft className="text-[#00203f]" />
                   </Button>
                 </TooltipTrigger>
@@ -354,7 +448,15 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
                   </Button>
                   <div className="z-50 absolute md:-left-[450%] md:top-[140%] w-[380px] bg-white rounded-lg md:block hidden">
                     <div className={`relative ${showSearchBar ? "block" : "hidden"}`}>
-                      <Input placeholder="Search within chat" className="w-full h-11" value={messageSearchInput} onChange={(e) => {setMessageSearchInput(e.target.value); handleMessageSearch(e)}} />
+                      <Input
+                        placeholder="Search within chat"
+                        className="w-full h-11"
+                        value={messageSearchInput}
+                        onChange={(e) => {
+                          setMessageSearchInput(e.target.value);
+                          handleMessageSearch(e);
+                        }}
+                      />
                       <div className="flex gap-2 items-center absolute right-2 top-1/2 transform -translate-y-1/2">
                         <Button disabled={currentMessageIndex === 0} variant={"ghost"} size={"icon"} className="[&_svg]:size-5 rounded-full" onClick={() => handleMessageNavigation("up")}>
                           <ChevronUp className="text-[#00203f]" />
@@ -424,7 +526,15 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
         {showSearchBar && (
           <div className="z-50 md:hidden flex w-full bg-white">
             <div className={`relative flex-1`}>
-              <Input placeholder="Search within chat" className="w-full h-11" value={messageSearchInput} onChange={(e) => {setMessageSearchInput(e.target.value); handleMessageSearch(e)}} />
+              <Input
+                placeholder="Search within chat"
+                className="w-full h-11"
+                value={messageSearchInput}
+                onChange={(e) => {
+                  setMessageSearchInput(e.target.value);
+                  handleMessageSearch(e);
+                }}
+              />
               <div className="flex gap-2 items-center absolute right-2 top-1/2 transform -translate-y-1/2">
                 <Button disabled={currentMessageIndex === 0} variant={"ghost"} size={"icon"} className="[&_svg]:size-5 rounded-full" onClick={() => handleMessageNavigation("up")}>
                   <ChevronUp className="text-[#00203f]" />
@@ -480,7 +590,7 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
                 messages.map((message) => (
                   <div key={message.id} ref={(el) => (messageRefs.current[message.id] = el)} className={cn("flex", message.fromId === userId && "flex-row-reverse", "")}>
                     <div className={cn("group flex flex-col max-w-[75vw] lg:max-w-[50vw]", message.fromId === userId && "items-end")}>
-                      <div className={cn("px-3 py-2.5 rounded-md min-w-32 text-sm md:text-base transition-colors duration-500", message.fromId === userId ? "bg-[#2665d1] text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none", highlightedMessage === message.id ? "bg-blue-300" : "")}>
+                    {message?.isMedia ? <MediaThumbnail filename={message.message} originalKey={message?.mediaKey} chatroomId={selectedChatroom?.id} thumbhKey={message?.mediaThumbnailKey} contentType={message?.mediaType} /> :<div className={cn("px-3 py-2.5 rounded-md min-w-32 text-sm md:text-base transition-colors duration-500", message.fromId === userId ? "bg-[#2665d1] text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none", highlightedMessage === message.id ? "bg-blue-300" : "")}>
                         {message.isDeleted ? (
                           <div className={cn("flex items-center gap-2", message.fromId === userId ? "text-gray-200" : "text-gray-500")}>
                             <MessageCircleOff size={16} />
@@ -506,10 +616,10 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
                           </div>
                         ) : (
                           <p className="whitespace-pre-wrap text-sm md:text-base min-w-24" style={{ overflowWrap: "anywhere" }}>
-                            {message.message}
+                           {message.message}
                           </p>
                         )}
-                      </div>
+                      </div>}
                       <div className="flex items-center gap-1">
                         <span className="text-xs text-muted-foreground">{message?.createdAt?.seconds ? `${message?.isEdited ? "(Edited)" : ""} ${formatDate({ timestamp: message?.createdAt?.seconds })}` : "Sending..."}</span>
                         {message.fromId === userId && (
@@ -521,7 +631,7 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
                         )}
                       </div>
                     </div>
-                    {!message.isDeleted && (
+                    {!message.isDeleted && !message.isMedia && (
                       <div>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -591,7 +701,13 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
           </div>
         </ContextMenuTrigger>
         <ContextMenuContent>
-          <ContextMenuItem className="gap-2" onClick={handleChatroomClose}>
+          <ContextMenuItem
+            className="gap-2"
+            onClick={() => {
+              setFilesSize(0);
+              handleChatroomClose();
+            }}
+          >
             <X size={18} />
             <div>Close Chat</div>
           </ContextMenuItem>
@@ -600,6 +716,23 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
 
       {/* Input and Other actions */}
       <div className="bg-background border-t">
+        {filesSize > 1073741824 && (
+          <div className="p-2 pb-0">
+            <Alert variant="destructive">
+              <AlertCircle className="w-4 h-4" />
+              <AlertDescription>Total file size cannot exceed 1GB limit</AlertDescription>
+            </Alert>
+          </div>
+        )}
+        {files.length > 10 && (
+          <div className="p-2 pb-0">
+            <Alert variant="destructive">
+              <AlertCircle className="w-4 h-4" />
+              <AlertDescription>Maximum 10 files can be uploaded at a time</AlertDescription>
+            </Alert>
+          </div>
+        )}
+
         {files.length > 0 && (
           <ScrollArea className="w-full whitespace-nowrap rounded-md">
             <div className="flex w-max space-x-4 p-4">
@@ -633,9 +766,15 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
                 return;
               } else if (e.key === "Enter") {
                 e.preventDefault();
+                if (files.length > 0) {
+                  handleFileSend();
+                  return;
+                }
+
                 if (inputMessage.trim().length <= 0) {
                   return;
                 }
+
                 scrollToBottom("smooth");
                 setInputMessage("");
                 if (editActive) {
@@ -653,6 +792,10 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
             }}
             onSubmit={(e) => {
               e.preventDefault();
+              if (files.length > 0) {
+                handleFileSend();
+                return;
+              }
               if (inputMessage.trim().length <= 0) {
                 return;
               }
@@ -723,9 +866,9 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
                   </Button>
                 </div>
               )}
-              <Textarea rows={1} maxLength={10000} ref={inputRef} className={`min-h-10 max-h-28 resize-none py-1 outline-none flex-grow overflow-hidden p-2 rounded-m ${(editActive || replyActive) && "rounded-t-none border-l-4 border-l-blue-300"}`} id="message" placeholder="Type your message..." value={inputMessage} onChange={(e) => setInputMessage(e.target.value)} autoComplete="off" />
+              <Textarea rows={1} disabled={files.length > 0} maxLength={10000} ref={inputRef} className={`min-h-12 max-h-28 resize-none py-1 outline-none flex-grow overflow-hidden p-2 rounded-m ${(editActive || replyActive) && "rounded-t-none border-l-4 border-l-blue-300"}`} id="message" placeholder="Type your message..." value={inputMessage} onChange={(e) => setInputMessage(e.target.value)} autoComplete="off" />
             </div>
-            <Button type="submit" variant="ghost" disabled={inputMessage.trim().length < 1} size="icon" className="[&_svg]:size-5">
+            <Button type="submit" variant="ghost" disabled={inputMessage.trim().length < 1 && (files.length == 0 || files.length > 10 || filesSize > 1073741824)} size="icon" className="[&_svg]:size-5">
               <Send className="text-[#00203f]" />
               <span className="sr-only">Send</span>
             </Button>

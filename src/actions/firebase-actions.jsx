@@ -85,15 +85,16 @@ export const createChatroom = async () => {
   }
 };
 
-export const sendMessage = async ({ chatroom, fromId, message, mediaUrl = "", mediaType = "", mediaThumbnail = "", starredBy = [], repliedTo = { message: "", id: "", fromId: "" }, readInfo = { status: false, date: null }, createdAt = serverTimestamp(), isEdited = false, editedAt = null, isDeleted = false, deletedAt = null }) => {
+export const sendMessage = async ({ chatroom, fromId, message, isMedia = false, mediaKey = "", mediaType = "", mediaThumbnailKey = "", starredBy = [], repliedTo = { message: "", id: "", fromId: "" }, readInfo = { status: false, date: null }, createdAt = serverTimestamp(), isEdited = false, editedAt = null, isDeleted = false, deletedAt = null }) => {
   if (!chatroom) return;
 
   const newMessage = {
     fromId,
     message,
-    mediaUrl,
+    isMedia,
+    mediaKey,
     mediaType,
-    mediaThumbnail,
+    mediaThumbnailKey,
     starredBy,
     repliedTo,
     readInfo,
@@ -108,6 +109,19 @@ export const sendMessage = async ({ chatroom, fromId, message, mediaUrl = "", me
     const messageRef = await addDoc(collection(db, "Chatrooms", chatroom.id, "Messages"), newMessage);
     console.log("Message sent with ID: ", messageRef.id);
 
+    if(isMedia) {
+      const mediaObj = {
+        messageId: messageRef.id,
+        mediaKey,
+        mediaType,
+        mediaThumbnailKey,
+        uploadedBy: fromId,
+        uploadedAt: createdAt,
+      }
+      const mediaRef = await addDoc(collection(db, "Chatrooms", chatroom.id, "Media"), mediaObj);
+      console.log("Media uploaded with ID: ", mediaRef.id);
+    }
+
     const chatroomRef = doc(db, "Chatrooms", chatroom.id);
     
     const lastMessage = {
@@ -116,6 +130,8 @@ export const sendMessage = async ({ chatroom, fromId, message, mediaUrl = "", me
       senderId: fromId,
       messageId: messageRef.id,
       readStatus: false,
+      isMedia,
+      mediaType,
       isDeleted: false,
     };
 
@@ -130,6 +146,8 @@ export const sendMessage = async ({ chatroom, fromId, message, mediaUrl = "", me
       lastMessage,
       unreadCount,
     });
+
+    
   } catch (e) {
     console.error("Error sending message: ", e);
   }
