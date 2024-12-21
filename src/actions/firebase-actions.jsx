@@ -112,6 +112,7 @@ export const sendMessage = async ({ chatroom, fromId, message, isMedia = false, 
     if(isMedia) {
       const mediaObj = {
         messageId: messageRef.id,
+        filename: message,
         mediaKey,
         mediaType,
         mediaThumbnailKey,

@@ -8,7 +8,7 @@ import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 export const ProfileInfo = ({ profiles, setShowProfileInfo, selectedChatroom }) => {
-
+  
   const sharedMedia = [
     { type: "image", url: "/placeholder.svg?height=50&width=50", name: "Image 1" },
     { type: "image", url: "/placeholder.svg?height=50&width=50", name: "Image 2" },
