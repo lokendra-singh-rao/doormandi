@@ -1,4 +1,4 @@
-import { deleteMessage, editMessage, fetchMessages, markMessagesAsRead, sendMessage } from "@/actions/firebase-actions";
+import { deleteMessage, editMessage, fetchMessages, markMessageAsStarred, markMessageAsUnstarred, markMessagesAsRead, sendMessage } from "@/actions/firebase-actions";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -36,6 +36,7 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
   const [filesSize, setFilesSize] = useState(0);
   const [isSendDisabled, setIsSendDisabled] = useState(false);
 
+  console.log("Messages", messages);
   const scrollAreaRef = useRef(null);
   const inputRef = useRef(null);
   const messageRefs = useRef({});
@@ -590,36 +591,41 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
                 messages.map((message) => (
                   <div key={message.id} ref={(el) => (messageRefs.current[message.id] = el)} className={cn("flex", message.fromId === userId && "flex-row-reverse", "")}>
                     <div className={cn("group flex flex-col max-w-[75vw] lg:max-w-[50vw]", message.fromId === userId && "items-end")}>
-                    {message?.isMedia ? <MediaThumbnail filename={message.message} originalKey={message?.mediaKey} chatroomId={selectedChatroom?.id} thumbhKey={message?.mediaThumbnailKey} contentType={message?.mediaType} /> :<div className={cn("px-3 py-2.5 rounded-md min-w-32 text-sm md:text-base transition-colors duration-500", message.fromId === userId ? "bg-[#2665d1] text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none", highlightedMessage === message.id ? "bg-blue-300" : "")}>
-                        {message.isDeleted ? (
-                          <div className={cn("flex items-center gap-2", message.fromId === userId ? "text-gray-200" : "text-gray-500")}>
-                            <MessageCircleOff size={16} />
-                            <p className="text-md break-words">
-                              <i>{message.message}</i>
-                            </p>
-                          </div>
-                        ) : message?.repliedTo?.message ? (
-                          <div className="flex flex-col">
-                            <div onClick={() => scrollToMessage({ messageId: message?.repliedTo?.id })} className="cursor-pointer w-full rounded-md bottom-full text-[10px] border-l-4 border-blue-300 flex justify-between bg-gray-200 items-center p-2">
-                              <div className="flex items-center gap-1">
-                                <div className="flex-1 flex flex-col text-sm">
-                                  <span className="mr-2 font-medium text-primary">{message?.repliedTo?.fromId == userId ? "You" : selectedChatroom.fromId === userId ? selectedChatroom.toId : selectedChatroom.fromId}</span>
-                                  <span style={{ overflowWrap: "anywhere" }} className="whitespace-pre-wrap text-muted-foreground">
-                                    {formatMessageForEditOrReply({ message: message?.repliedTo?.message })}
-                                  </span>
+                      {message?.isMedia ? (
+                        <MediaThumbnail filename={message.message} originalKey={message?.mediaKey} chatroomId={selectedChatroom?.id} thumbhKey={message?.mediaThumbnailKey} contentType={message?.mediaType} />
+                      ) : (
+                        <div className={cn("px-3 py-2.5 rounded-md min-w-32 text-sm md:text-base transition-colors duration-500 relative", message.fromId === userId ? "bg-[#2665d1] text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none", highlightedMessage === message.id ? "bg-blue-300" : "")}>
+                          {message.isDeleted ? (
+                            <div className={cn("flex items-center gap-2", message.fromId === userId ? "text-gray-200" : "text-gray-500")}>
+                              <MessageCircleOff size={16} />
+                              <p className="text-md break-words">
+                                <i>{message.message}</i>
+                              </p>
+                            </div>
+                          ) : message?.repliedTo?.message ? (
+                            <div className="flex flex-col">
+                              <div onClick={() => scrollToMessage({ messageId: message?.repliedTo?.id })} className="cursor-pointer w-full rounded-md bottom-full text-[10px] border-l-4 border-blue-300 flex justify-between bg-gray-200 items-center p-2">
+                                <div className="flex items-center gap-1">
+                                  <div className="flex-1 flex flex-col text-sm">
+                                    <span className="mr-2 font-medium text-primary">{message?.repliedTo?.fromId == userId ? "You" : selectedChatroom.fromId === userId ? selectedChatroom.toId : selectedChatroom.fromId}</span>
+                                    <span style={{ overflowWrap: "anywhere" }} className="whitespace-pre-wrap text-muted-foreground">
+                                      {formatMessageForEditOrReply({ message: message?.repliedTo?.message })}
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
+                              <p className={cn("whitespace-pre-wrap text-sm md:text-base")} style={{ overflowWrap: "anywhere" }}>
+                                {message.message}
+                              </p>
                             </div>
-                            <p className={cn("whitespace-pre-wrap text-sm md:text-base")} style={{ overflowWrap: "anywhere" }}>
+                          ) : (
+                            <p className="whitespace-pre-wrap text-sm md:text-base min-w-24" style={{ overflowWrap: "anywhere" }}>
                               {message.message}
                             </p>
-                          </div>
-                        ) : (
-                          <p className="whitespace-pre-wrap text-sm md:text-base min-w-24" style={{ overflowWrap: "anywhere" }}>
-                           {message.message}
-                          </p>
-                        )}
-                      </div>}
+                          )}
+                          {message?.starredBy?.includes(userId) && <Star className="absolute right-2 bottom-2" size={12} fill="yellow" color="yellow" />}
+                        </div>
+                      )}
                       <div className="flex items-center gap-1">
                         <span className="text-xs text-muted-foreground">{message?.createdAt?.seconds ? `${message?.isEdited ? "(Edited)" : ""} ${formatDate({ timestamp: message?.createdAt?.seconds })}` : "Sending..."}</span>
                         {message.fromId === userId && (
@@ -647,8 +653,16 @@ export const ChatRoom = ({ files, setFiles, handleChatroomClose, messagesLoading
                             <DropdownMenuItem onClick={() => handleCopyToClipboard({ content: message.message })}>
                               <Copy /> Copy to Clipboard
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleCopyToClipboard({ content: message.message })}>
-                              <Star /> Star Message
+                            <DropdownMenuItem
+                              onClick={() => {
+                                if (!message?.starredBy?.includes(userId)) {
+                                  return markMessageAsStarred({ message, userId });
+                                } else {
+                                  return markMessageAsUnstarred({ message, userId });
+                                }
+                              }}
+                            >
+                              <Star /> {message?.starredBy?.includes(userId) ? "Unstar Message" : "Star Message"}
                             </DropdownMenuItem>
                             {message.fromId === userId && isRecentMessage({ createdAtSeconds: message.createdAt?.seconds }) && (
                               <DropdownMenuItem onClick={() => handleEditMessage({ message })}>
