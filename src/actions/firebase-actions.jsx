@@ -31,6 +31,27 @@ export const fetchChatrooms = async ({ userId, setChatrooms, setArchivedChatroom
   );
 };
 
+export const fetchMedia = async ({ chatroomId, setSharedMedia }) => {
+  if (!chatroomId) return;
+
+  console.log("Fetching messages for chatroom: ", chatroomId);
+
+  const q = query(collection(db, "Chatrooms", chatroomId, "Messages"), where("isMedia", "==", true), orderBy("createdAt", "asc"));
+
+  onSnapshot(
+    q,
+    (snapshot) => {
+      const media = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setSharedMedia(media);
+    },
+    (error) => {
+      console.error("Error fetching messages: ", error);
+    }
+  );
+};
 export const fetchMessages = async ({ chatroomId, setMessages }) => {
   if (!chatroomId) return;
 
@@ -109,7 +130,7 @@ export const sendMessage = async ({ chatroom, fromId, message, isMedia = false, 
     const messageRef = await addDoc(collection(db, "Chatrooms", chatroom.id, "Messages"), newMessage);
     console.log("Message sent with ID: ", messageRef.id);
 
-    if(isMedia) {
+    if (isMedia) {
       const mediaObj = {
         messageId: messageRef.id,
         filename: message,
@@ -118,13 +139,13 @@ export const sendMessage = async ({ chatroom, fromId, message, isMedia = false, 
         mediaThumbnailKey,
         uploadedBy: fromId,
         uploadedAt: createdAt,
-      }
+      };
       const mediaRef = await addDoc(collection(db, "Chatrooms", chatroom.id, "Media"), mediaObj);
       console.log("Media uploaded with ID: ", mediaRef.id);
     }
 
     const chatroomRef = doc(db, "Chatrooms", chatroom.id);
-    
+
     const lastMessage = {
       text: message,
       sentAt: createdAt,
@@ -147,8 +168,6 @@ export const sendMessage = async ({ chatroom, fromId, message, isMedia = false, 
       lastMessage,
       unreadCount,
     });
-
-    
   } catch (e) {
     console.error("Error sending message: ", e);
   }
@@ -272,19 +291,18 @@ export const markMessagesAsRead = async ({ selectedChatroom, currentUserId }) =>
       });
     }
 
-    if(selectedChatroom.unreadCount[currentUserId] === 0) return;
-    
+    if (selectedChatroom.unreadCount[currentUserId] === 0) return;
+
     const otherUserId = selectedChatroom.fromId == currentUserId ? selectedChatroom.toId : selectedChatroom.fromId;
 
     const unreadCount = {
       [currentUserId]: 0,
       [otherUserId]: selectedChatroom.unreadCount[otherUserId],
     };
-    
+
     updateDoc(chatroomRef, {
       unreadCount,
     });
-
   } catch (error) {
     console.error("Error marking messages as read:", error);
   }
@@ -343,5 +361,33 @@ export const markChatroomAsUnstarred = async ({ selectedChatroom, userId }) => {
     console.log("Chatroom unstarred successfully.");
   } catch (e) {
     console.error("Error unstarring chatroom: ", e);
+  }
+};
+export const markMessageAsStarred = async ({ message, userId }) => {
+  if (!message) return;
+
+  const messageRef = await doc(db, "Messages", message?.id);
+  try {
+    await updateDoc(messageRef, {
+      starredBy: [...message.starredBy, userId],
+    });
+    console.log("Message starred successfully.");
+  } catch (e) {
+    console.error("Error starring message: ", e);
+  }
+};
+
+export const markMessageAsUnstarred = async ({ message, userId }) => {
+  if (!message) return;
+
+  console.log(message.id);
+  const messageRef = await doc(db, "Messages", message?.id);
+  try {
+    await updateDoc(messageRef, {
+      starredBy: message.starredBy.filter((id) => id !== userId),
+    });
+    console.log("Message unstarred successfully.");
+  } catch (e) {
+    console.error("Error unstarring message: ", e);
   }
 };
